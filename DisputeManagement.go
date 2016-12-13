@@ -112,7 +112,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		}
 		
 		// store the JSON on ledger
-		err = stub.PutState(key, disputeRecordJSON) //write the variable into the chaincode state
+		err = stub.PutState(disputeId, disputeRecordJSON) //write the variable into the chaincode state
 		if err != nil {
 			return nil, err
 		}
