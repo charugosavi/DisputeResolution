@@ -105,7 +105,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		var updatedDispute CustomerDispute
 		err = json.Unmarshal(args[1], &updatedDispute)
 
-		disputeRecordJSON, err := json.Marshal(dispute)
+		disputeRecordJSON, err := json.Marshal(updatedDispute)
 		
 		if(err != nil){
 			return nil, err		
