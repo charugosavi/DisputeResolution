@@ -1,9 +1,13 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
-	"encoding/json"
+	"strconv"
+	"time"
+	"strings"
+
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
@@ -103,7 +107,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		var disputeId string
 		disputeId = args[0]
 		var updatedDispute CustomerDispute
-		err = json.Unmarshal([]byte(args[1]), &updatedDispute)
+		err := json.Unmarshal([]byte(args[1]), &updatedDispute)
 
 		disputeRecordJSON, err := json.Marshal(updatedDispute)
 		
