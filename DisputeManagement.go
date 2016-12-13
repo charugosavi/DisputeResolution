@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"rand"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
@@ -145,6 +146,8 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 	}
 	return nil, nil
 }
+
+const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 func RandStringBytesRmndr(n int) string {
     b := make([]byte, n)
