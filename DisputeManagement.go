@@ -84,7 +84,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 
 	if function == "create" {
 		var dispute CustomerDispute
-		err = json.Unmarshal([]byte(args[0]), &dispute)
+		err := json.Unmarshal([]byte(args[0]), &dispute)
 		timestamp := strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
 		dispute.DisputeId = timestamp
 
