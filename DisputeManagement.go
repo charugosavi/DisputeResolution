@@ -91,7 +91,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		disputeRecordJSON, err := json.Marshal(dispute)
 		
 		if(err != nil){
-			fmt.Println("Error while creating JSON structure: %s" , err)		
+			return nil, err		
 		}
 		
 		// store the JSON on ledger
@@ -108,7 +108,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		disputeRecordJSON, err := json.Marshal(dispute)
 		
 		if(err != nil){
-			fmt.Println("Error while creating JSON structure: %s" , err)		
+			return nil, err		
 		}
 		
 		// store the JSON on ledger
