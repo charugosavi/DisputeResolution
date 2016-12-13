@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"rand"
+	"math/rand"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
