@@ -88,8 +88,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		err := json.Unmarshal([]byte(args[0]), &dispute)
 		//timestamp := strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
 		dispute.DisputeId = RandStringBytesRmndr(10)
-
-		disputeRecordJSON, err := json.Marshal(dispute)
+		fmt.Println("Generated dispute Id - " + dispute.DisputeId)
+		disputeRecordJSON, err := json.Marshal(&dispute)
 		
 		if(err != nil){
 			return nil, err		
@@ -106,7 +106,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		var updatedDispute CustomerDispute
 		err := json.Unmarshal([]byte(args[1]), &updatedDispute)
 
-		disputeRecordJSON, err := json.Marshal(updatedDispute)
+		disputeRecordJSON, err := json.Marshal(&updatedDispute)
 		
 		if(err != nil){
 			return nil, err		
