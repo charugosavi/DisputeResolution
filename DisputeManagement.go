@@ -4,9 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strconv"
-	"time"
-
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
@@ -88,8 +85,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 	if function == "create" {
 		var dispute CustomerDispute
 		err := json.Unmarshal([]byte(args[0]), &dispute)
-		timestamp := strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
-		dispute.DisputeId = timestamp
+		//timestamp := strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
+		dispute.DisputeId = RandStringBytesRmndr(10)
 
 		disputeRecordJSON, err := json.Marshal(dispute)
 		
@@ -147,4 +144,12 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 		return valAsbytes, nil
 	}
 	return nil, nil
+}
+
+func RandStringBytesRmndr(n int) string {
+    b := make([]byte, n)
+    for i := range b {
+        b[i] = letterBytes[rand.Int63() % int64(len(letterBytes))]
+    }
+    return string(b)
 }
