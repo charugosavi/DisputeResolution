@@ -1458,8 +1458,8 @@ func (this *HDLS) overwriteResolution(x *Resolution) error {
 // 9. CUSTOMERDISPUTE 
 //------------------------
 
-func (this *HDLS) refIdCustomerDisputeTransactionId(v string) string {
-	return fmt.Sprintf("CustomerDispute.TransactionId=%v", v)
+func (this *HDLS) refIdCustomerDisputeTransactionIdentificationId(v string) string {
+	return fmt.Sprintf("CustomerDispute.TransactionIdentificationId=%v", v)
 }
 func (this *HDLS) refIdCustomerDisputeCustomerId(v string) string {
 	return fmt.Sprintf("CustomerDispute.CustomerId=%v", v)
@@ -1486,7 +1486,7 @@ func (this *HDLS) putCustomerDispute(x *CustomerDispute) error {
 	}
 
 	dst := x	// copy
-	dst.Transaction = nil
+	dst.TransactionIdentification = nil
 	dst.Customer = nil
 	dst.Bank = nil
 	dst.PISP = nil
@@ -1500,7 +1500,7 @@ func (this *HDLS) putCustomerDispute(x *CustomerDispute) error {
 
 	var ref *Reference
 	var refId string
-	refId = this.refIdCustomerDisputeTransactionId(x.TransactionId)
+	refId = this.refIdCustomerDisputeTransactionIdentificationId(x.TransactionIdentificationId)
 	ref, _ = this.getReference(refId)
 	if ref == nil {
 		ref = &Reference{
@@ -1628,7 +1628,7 @@ func (this *HDLS) getCustomerDispute(id string) (*CustomerDispute, error) {
 		return nil, nil
 	}
 
-	x.Transaction, err = this.getTransaction(x.TransactionId)
+	x.TransactionIdentification, err = this.getTransactionIdentification(x.TransactionIdentificationId)
 	if err != nil {
 		return nil, err
 	}
@@ -1668,7 +1668,7 @@ func (this *HDLS) listCustomerDisputes() (*CustomerDisputes, error) {
 	for _, row := range rows {
 		var x CustomerDispute 
 		if this.val(row, &x) == nil {
-			x.Transaction, err = this.getTransaction(x.TransactionId)
+			x.TransactionIdentification, err = this.getTransactionIdentification(x.TransactionIdentificationId)
 			if err != nil {
 				continue
 			}
@@ -1698,10 +1698,10 @@ func (this *HDLS) listCustomerDisputes() (*CustomerDisputes, error) {
 	return &xs, nil
 }
 
-func (this *HDLS) listCustomerDisputesByTransactionId(v string) (*CustomerDisputes, error) {
+func (this *HDLS) listCustomerDisputesByTransactionIdentificationId(v string) (*CustomerDisputes, error) {
 
 	var xs CustomerDisputes
-	refId := this.refIdCustomerDisputeTransactionId(v)
+	refId := this.refIdCustomerDisputeTransactionIdentificationId(v)
 	reference, _ := this.getReference(refId)
 	if reference != nil {
 		for _, id := range reference.Ids {
@@ -1840,7 +1840,7 @@ func (this *HDLS) deleteCustomerDispute(x *CustomerDispute) error {
 		return errors.New("NOT_FOUND")
 	}
 
-	refId = this.refIdCustomerDisputeTransactionId(curr.TransactionId)
+	refId = this.refIdCustomerDisputeTransactionIdentificationId(curr.TransactionIdentificationId)
 	ref, _ = this.getReference(refId)
 	if ref != nil {
 		ref.Ids = remove(ref.Ids, x.Id)

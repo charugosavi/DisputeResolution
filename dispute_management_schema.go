@@ -99,24 +99,24 @@ type Resolutions struct {
 
 // Customer initiated dispute structure
 type CustomerDispute struct {
-	Id            string                     `json:"disputeId"` //@PK
-	Transaction   *TransactionIdentification `json:"transaction"`
-	TransactionId string                     //@index
-	DisputeType   string                     `json:"disputetype"`
-	Comments      string                     `json:"comments"`
-	Customer      *Customer                  `json:"customer"`
-	CustomerId    string                     //@index
-	Bank          *Bank                      `json:"bank"`
-	BankId        string                     //@index
-	PISP          *PISP                      `json:"pisp"`
-	PISPId        string                     //@index
-	Merchant      *Merchant                  `json:"merchant"`
-	MerchantId    string                     //@index
-	Status        string                     `json:"status"` //@index
-	CreatedDate   string                     `json:"created"`
-	LastUpdated   string                     `json:"updated"`
-	Resolution    *Resolution                `json:"resolution"`
-	ResolutionId  string                     //@index
+	Id                          string                     `json:"disputeId"` //@PK
+	TransactionIdentification   *TransactionIdentification `json:"transaction"`
+	TransactionIdentificationId string                     //@index
+	DisputeType                 string                     `json:"disputetype"`
+	Comments                    string                     `json:"comments"`
+	Customer                    *Customer                  `json:"customer"`
+	CustomerId                  string                     //@index
+	Bank                        *Bank                      `json:"bank"`
+	BankId                      string                     //@index
+	PISP                        *PISP                      `json:"pisp"`
+	PISPId                      string                     //@index
+	Merchant                    *Merchant                  `json:"merchant"`
+	MerchantId                  string                     //@index
+	Status                      string                     `json:"status"` //@index
+	CreatedDate                 string                     `json:"created"`
+	LastUpdated                 string                     `json:"updated"`
+	Resolution                  *Resolution                `json:"resolution"`
+	ResolutionId                string                     //@index
 }
 
 type CustomerDisputes struct {
