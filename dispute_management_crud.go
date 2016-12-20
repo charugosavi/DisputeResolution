@@ -616,8 +616,8 @@ func (this *HDLS) overwriteTransactionInfo(x *TransactionInfo) error {
 // 4. CUSTOMER 
 //------------------------
 
-func (this *HDLS) refIdCustomerTransactionId(v string) string {
-	return fmt.Sprintf("Customer.TransactionId=%v", v)
+func (this *HDLS) refIdCustomerTransactionInfoId(v string) string {
+	return fmt.Sprintf("Customer.TransactionInfoId=%v", v)
 }
 
 func (this *HDLS) putCustomer(x *Customer) error {
@@ -626,7 +626,7 @@ func (this *HDLS) putCustomer(x *Customer) error {
 	}
 
 	dst := x	// copy
-	dst.Transaction = nil
+	dst.TransactionInfo = nil
 	
 	err := this.putA("Customer", dst.Id, dst)
 	if err != nil {
@@ -635,7 +635,7 @@ func (this *HDLS) putCustomer(x *Customer) error {
 
 	var ref *Reference
 	var refId string
-	refId = this.refIdCustomerTransactionId(x.TransactionId)
+	refId = this.refIdCustomerTransactionInfoId(x.TransactionInfoId)
 	ref, _ = this.getReference(refId)
 	if ref == nil {
 		ref = &Reference{
@@ -667,7 +667,7 @@ func (this *HDLS) getCustomer(id string) (*Customer, error) {
 		return nil, nil
 	}
 
-	x.Transaction, err = this.getTransaction(x.TransactionId)
+	x.TransactionInfo, err = this.getTransactionInfo(x.TransactionInfoId)
 	if err != nil {
 		return nil, err
 	}
@@ -687,7 +687,7 @@ func (this *HDLS) listCustomers() (*Customers, error) {
 	for _, row := range rows {
 		var x Customer 
 		if this.val(row, &x) == nil {
-			x.Transaction, err = this.getTransaction(x.TransactionId)
+			x.TransactionInfo, err = this.getTransactionInfo(x.TransactionInfoId)
 			if err != nil {
 				continue
 			}
@@ -697,10 +697,10 @@ func (this *HDLS) listCustomers() (*Customers, error) {
 	return &xs, nil
 }
 
-func (this *HDLS) listCustomersByTransactionId(v string) (*Customers, error) {
+func (this *HDLS) listCustomersByTransactionInfoId(v string) (*Customers, error) {
 
 	var xs Customers
-	refId := this.refIdCustomerTransactionId(v)
+	refId := this.refIdCustomerTransactionInfoId(v)
 	reference, _ := this.getReference(refId)
 	if reference != nil {
 		for _, id := range reference.Ids {
@@ -743,7 +743,7 @@ func (this *HDLS) deleteCustomer(x *Customer) error {
 		return errors.New("NOT_FOUND")
 	}
 
-	refId = this.refIdCustomerTransactionId(curr.TransactionId)
+	refId = this.refIdCustomerTransactionInfoId(curr.TransactionInfoId)
 	ref, _ = this.getReference(refId)
 	if ref != nil {
 		ref.Ids = remove(ref.Ids, x.Id)
@@ -775,8 +775,8 @@ func (this *HDLS) overwriteCustomer(x *Customer) error {
 // 5. BANK 
 //------------------------
 
-func (this *HDLS) refIdBankTransactionId(v string) string {
-	return fmt.Sprintf("Bank.TransactionId=%v", v)
+func (this *HDLS) refIdBankTransactionInfoId(v string) string {
+	return fmt.Sprintf("Bank.TransactionInfoId=%v", v)
 }
 
 func (this *HDLS) putBank(x *Bank) error {
@@ -785,7 +785,7 @@ func (this *HDLS) putBank(x *Bank) error {
 	}
 
 	dst := x	// copy
-	dst.Transaction = nil
+	dst.TransactionInfo = nil
 	
 	err := this.putA("Bank", dst.Id, dst)
 	if err != nil {
@@ -794,7 +794,7 @@ func (this *HDLS) putBank(x *Bank) error {
 
 	var ref *Reference
 	var refId string
-	refId = this.refIdBankTransactionId(x.TransactionId)
+	refId = this.refIdBankTransactionInfoId(x.TransactionInfoId)
 	ref, _ = this.getReference(refId)
 	if ref == nil {
 		ref = &Reference{
@@ -826,7 +826,7 @@ func (this *HDLS) getBank(id string) (*Bank, error) {
 		return nil, nil
 	}
 
-	x.Transaction, err = this.getTransaction(x.TransactionId)
+	x.TransactionInfo, err = this.getTransactionInfo(x.TransactionInfoId)
 	if err != nil {
 		return nil, err
 	}
@@ -846,7 +846,7 @@ func (this *HDLS) listBanks() (*Banks, error) {
 	for _, row := range rows {
 		var x Bank 
 		if this.val(row, &x) == nil {
-			x.Transaction, err = this.getTransaction(x.TransactionId)
+			x.TransactionInfo, err = this.getTransactionInfo(x.TransactionInfoId)
 			if err != nil {
 				continue
 			}
@@ -856,10 +856,10 @@ func (this *HDLS) listBanks() (*Banks, error) {
 	return &xs, nil
 }
 
-func (this *HDLS) listBanksByTransactionId(v string) (*Banks, error) {
+func (this *HDLS) listBanksByTransactionInfoId(v string) (*Banks, error) {
 
 	var xs Banks
-	refId := this.refIdBankTransactionId(v)
+	refId := this.refIdBankTransactionInfoId(v)
 	reference, _ := this.getReference(refId)
 	if reference != nil {
 		for _, id := range reference.Ids {
@@ -902,7 +902,7 @@ func (this *HDLS) deleteBank(x *Bank) error {
 		return errors.New("NOT_FOUND")
 	}
 
-	refId = this.refIdBankTransactionId(curr.TransactionId)
+	refId = this.refIdBankTransactionInfoId(curr.TransactionInfoId)
 	ref, _ = this.getReference(refId)
 	if ref != nil {
 		ref.Ids = remove(ref.Ids, x.Id)
@@ -934,8 +934,8 @@ func (this *HDLS) overwriteBank(x *Bank) error {
 // 6. MERCHANT 
 //------------------------
 
-func (this *HDLS) refIdMerchantTransactionId(v string) string {
-	return fmt.Sprintf("Merchant.TransactionId=%v", v)
+func (this *HDLS) refIdMerchantTransactionInfoId(v string) string {
+	return fmt.Sprintf("Merchant.TransactionInfoId=%v", v)
 }
 
 func (this *HDLS) putMerchant(x *Merchant) error {
@@ -944,7 +944,7 @@ func (this *HDLS) putMerchant(x *Merchant) error {
 	}
 
 	dst := x	// copy
-	dst.Transaction = nil
+	dst.TransactionInfo = nil
 	
 	err := this.putA("Merchant", dst.Id, dst)
 	if err != nil {
@@ -953,7 +953,7 @@ func (this *HDLS) putMerchant(x *Merchant) error {
 
 	var ref *Reference
 	var refId string
-	refId = this.refIdMerchantTransactionId(x.TransactionId)
+	refId = this.refIdMerchantTransactionInfoId(x.TransactionInfoId)
 	ref, _ = this.getReference(refId)
 	if ref == nil {
 		ref = &Reference{
@@ -985,7 +985,7 @@ func (this *HDLS) getMerchant(id string) (*Merchant, error) {
 		return nil, nil
 	}
 
-	x.Transaction, err = this.getTransaction(x.TransactionId)
+	x.TransactionInfo, err = this.getTransactionInfo(x.TransactionInfoId)
 	if err != nil {
 		return nil, err
 	}
@@ -1005,7 +1005,7 @@ func (this *HDLS) listMerchants() (*Merchants, error) {
 	for _, row := range rows {
 		var x Merchant 
 		if this.val(row, &x) == nil {
-			x.Transaction, err = this.getTransaction(x.TransactionId)
+			x.TransactionInfo, err = this.getTransactionInfo(x.TransactionInfoId)
 			if err != nil {
 				continue
 			}
@@ -1015,10 +1015,10 @@ func (this *HDLS) listMerchants() (*Merchants, error) {
 	return &xs, nil
 }
 
-func (this *HDLS) listMerchantsByTransactionId(v string) (*Merchants, error) {
+func (this *HDLS) listMerchantsByTransactionInfoId(v string) (*Merchants, error) {
 
 	var xs Merchants
-	refId := this.refIdMerchantTransactionId(v)
+	refId := this.refIdMerchantTransactionInfoId(v)
 	reference, _ := this.getReference(refId)
 	if reference != nil {
 		for _, id := range reference.Ids {
@@ -1061,7 +1061,7 @@ func (this *HDLS) deleteMerchant(x *Merchant) error {
 		return errors.New("NOT_FOUND")
 	}
 
-	refId = this.refIdMerchantTransactionId(curr.TransactionId)
+	refId = this.refIdMerchantTransactionInfoId(curr.TransactionInfoId)
 	ref, _ = this.getReference(refId)
 	if ref != nil {
 		ref.Ids = remove(ref.Ids, x.Id)
@@ -1093,8 +1093,8 @@ func (this *HDLS) overwriteMerchant(x *Merchant) error {
 // 7. PISP 
 //------------------------
 
-func (this *HDLS) refIdPISPTransactionId(v string) string {
-	return fmt.Sprintf("PISP.TransactionId=%v", v)
+func (this *HDLS) refIdPISPTransactionInfoId(v string) string {
+	return fmt.Sprintf("PISP.TransactionInfoId=%v", v)
 }
 
 func (this *HDLS) putPISP(x *PISP) error {
@@ -1103,7 +1103,7 @@ func (this *HDLS) putPISP(x *PISP) error {
 	}
 
 	dst := x	// copy
-	dst.Transaction = nil
+	dst.TransactionInfo = nil
 	
 	err := this.putA("PISP", dst.Id, dst)
 	if err != nil {
@@ -1112,7 +1112,7 @@ func (this *HDLS) putPISP(x *PISP) error {
 
 	var ref *Reference
 	var refId string
-	refId = this.refIdPISPTransactionId(x.TransactionId)
+	refId = this.refIdPISPTransactionInfoId(x.TransactionInfoId)
 	ref, _ = this.getReference(refId)
 	if ref == nil {
 		ref = &Reference{
@@ -1144,7 +1144,7 @@ func (this *HDLS) getPISP(id string) (*PISP, error) {
 		return nil, nil
 	}
 
-	x.Transaction, err = this.getTransaction(x.TransactionId)
+	x.TransactionInfo, err = this.getTransactionInfo(x.TransactionInfoId)
 	if err != nil {
 		return nil, err
 	}
@@ -1164,7 +1164,7 @@ func (this *HDLS) listPISPs() (*PISPs, error) {
 	for _, row := range rows {
 		var x PISP 
 		if this.val(row, &x) == nil {
-			x.Transaction, err = this.getTransaction(x.TransactionId)
+			x.TransactionInfo, err = this.getTransactionInfo(x.TransactionInfoId)
 			if err != nil {
 				continue
 			}
@@ -1174,10 +1174,10 @@ func (this *HDLS) listPISPs() (*PISPs, error) {
 	return &xs, nil
 }
 
-func (this *HDLS) listPISPsByTransactionId(v string) (*PISPs, error) {
+func (this *HDLS) listPISPsByTransactionInfoId(v string) (*PISPs, error) {
 
 	var xs PISPs
-	refId := this.refIdPISPTransactionId(v)
+	refId := this.refIdPISPTransactionInfoId(v)
 	reference, _ := this.getReference(refId)
 	if reference != nil {
 		for _, id := range reference.Ids {
@@ -1220,7 +1220,7 @@ func (this *HDLS) deletePISP(x *PISP) error {
 		return errors.New("NOT_FOUND")
 	}
 
-	refId = this.refIdPISPTransactionId(curr.TransactionId)
+	refId = this.refIdPISPTransactionInfoId(curr.TransactionInfoId)
 	ref, _ = this.getReference(refId)
 	if ref != nil {
 		ref.Ids = remove(ref.Ids, x.Id)

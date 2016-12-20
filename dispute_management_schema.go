@@ -27,56 +27,56 @@ type TransactionInfos struct {
 
 // Invovled party information structure. Used to represent Merchant, PISP and Bank transaction information.
 type Customer struct {
-	Id            string           `json:"id"` //@PK
-	Name          string           `json:"name"`
-	Branch        string           `json:"branch"`
-	Terminal      string           `json:"terminal"`
-	Cashier       string           `json:"cashier"`
-	Transaction   *TransactionInfo `json:"transaction"`
-	TransactionId string           //@index
-	Receipts      []string         `json:"receipts"`
+	Id                string           `json:"id"` //@PK
+	Name              string           `json:"name"`
+	Branch            string           `json:"branch"`
+	Terminal          string           `json:"terminal"`
+	Cashier           string           `json:"cashier"`
+	TransactionInfo   *TransactionInfo `json:"transaction"`
+	TransactionInfoId string           //@index
+	Receipts          []string         `json:"receipts"`
 }
 type Customers struct {
 	Data []Customer
 }
 
 type Bank struct {
-	Id            string           `json:"id"` //@PK
-	Name          string           `json:"name"`
-	Branch        string           `json:"branch"`
-	Terminal      string           `json:"terminal"`
-	Cashier       string           `json:"cashier"`
-	Transaction   *TransactionInfo `json:"transaction"`
-	TransactionId string           //@index
-	Receipts      []string         `json:"receipts"`
+	Id                string           `json:"id"` //@PK
+	Name              string           `json:"name"`
+	Branch            string           `json:"branch"`
+	Terminal          string           `json:"terminal"`
+	Cashier           string           `json:"cashier"`
+	TransactionInfo   *TransactionInfo `json:"transaction"`
+	TransactionInfoId string           //@index
+	Receipts          []string         `json:"receipts"`
 }
 type Banks struct {
 	Data []Bank
 }
 
 type Merchant struct {
-	Id            string           `json:"id"` //@PK
-	Name          string           `json:"name"`
-	Branch        string           `json:"branch"`
-	Terminal      string           `json:"terminal"`
-	Cashier       string           `json:"cashier"`
-	Transaction   *TransactionInfo `json:"transaction"`
-	TransactionId string           //@index
-	Receipts      []string         `json:"receipts"`
+	Id                string           `json:"id"` //@PK
+	Name              string           `json:"name"`
+	Branch            string           `json:"branch"`
+	Terminal          string           `json:"terminal"`
+	Cashier           string           `json:"cashier"`
+	TransactionInfo   *TransactionInfo `json:"transaction"`
+	TransactionInfoId string           //@index
+	Receipts          []string         `json:"receipts"`
 }
 type Merchants struct {
 	Data []Merchant
 }
 
 type PISP struct {
-	Id            string           `json:"id"` //@PK
-	Name          string           `json:"name"`
-	Branch        string           `json:"branch"`
-	Terminal      string           `json:"terminal"`
-	Cashier       string           `json:"cashier"`
-	Transaction   *TransactionInfo `json:"transaction"`
-	TransactionId string           //@index
-	Receipts      []string         `json:"receipts"`
+	Id                string           `json:"id"` //@PK
+	Name              string           `json:"name"`
+	Branch            string           `json:"branch"`
+	Terminal          string           `json:"terminal"`
+	Cashier           string           `json:"cashier"`
+	TransactionInfo   *TransactionInfo `json:"transaction"`
+	TransactionInfoId string           //@index
+	Receipts          []string         `json:"receipts"`
 }
 
 type PISPs struct {
