@@ -584,7 +584,7 @@ func (this *HDLS) putInvolvedParty(x *InvolvedParty) error {
 	}
 
 	dst := x	// copy
-	dst.Transaction = nil
+	dst.TransactionInfo = nil
 	
 	err := this.putA("InvolvedParty", dst.Id, dst)
 	if err != nil {
@@ -607,7 +607,7 @@ func (this *HDLS) getInvolvedParty(id string) (*InvolvedParty, error) {
 		return nil, nil
 	}
 
-	x.Transaction, err = this.getTransaction(x.TransactionId)
+	x.TransactionInfo, err = this.getTransactionInfo(x.TransactionInfoId)
 	if err != nil {
 		return nil, err
 	}
@@ -627,7 +627,7 @@ func (this *HDLS) listInvolvedPartys() (*InvolvedPartys, error) {
 	for _, row := range rows {
 		var x InvolvedParty 
 		if this.val(row, &x) == nil {
-			x.Transaction, err = this.getTransaction(x.TransactionId)
+			x.TransactionInfo, err = this.getTransactionInfo(x.TransactionInfoId)
 			if err != nil {
 				continue
 			}
@@ -688,7 +688,7 @@ func (this *HDLS) putResolution(x *Resolution) error {
 	}
 
 	dst := x	// copy
-	dst.Transaction = nil
+	dst.TransactionInfo = nil
 	
 	err := this.putA("Resolution", dst.Id, dst)
 	if err != nil {
@@ -729,7 +729,7 @@ func (this *HDLS) getResolution(id string) (*Resolution, error) {
 		return nil, nil
 	}
 
-	x.Transaction, err = this.getTransaction(x.TransactionId)
+	x.TransactionInfo, err = this.getTransactionInfo(x.TransactionInfoId)
 	if err != nil {
 		return nil, err
 	}
@@ -749,7 +749,7 @@ func (this *HDLS) listResolutions() (*Resolutions, error) {
 	for _, row := range rows {
 		var x Resolution 
 		if this.val(row, &x) == nil {
-			x.Transaction, err = this.getTransaction(x.TransactionId)
+			x.TransactionInfo, err = this.getTransactionInfo(x.TransactionInfoId)
 			if err != nil {
 				continue
 			}
