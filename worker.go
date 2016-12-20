@@ -18,7 +18,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-//	"strings"
+	//	"strings"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
@@ -50,17 +50,17 @@ func (this *HDLS) Init(function string, args []string) ([]byte, error) {
 
 	//if args[0] == "debug" {
 	//}
-	
+
 	//Initialize the Approver:Creator Organizations combinations with Secret_Token to be used during chaincode event publish
-	eventDistributionListJson := args[0]
-	var eventDistributions []EventDistribution
-	err := json.Unmarshal([]byte(eventDistributionListJson), &eventDistributions)
-	if err != nil {
-		return nil, err
-	}
-	for _, eventDistribution := range eventDistributions {	
-		this.putEventDistribution(&eventDistribution)
-	}
+	// eventDistributionListJson := args[0]
+	// var eventDistributions []EventDistribution
+	// err := json.Unmarshal([]byte(eventDistributionListJson), &eventDistributions)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// for _, eventDistribution := range eventDistributions {
+	// 	this.putEventDistribution(&eventDistribution)
+	// }
 	//Initialization ends
 
 	return nil, nil
@@ -86,29 +86,29 @@ func (this *HDLS) loadPreference() error {
 func (this *HDLS) Invoke(function string, args []string) ([]byte, error) {
 	this.loadPreference()
 
-	this.logger.Debugf("worker Invoke: %s, %d", function, len(args));
+	this.logger.Debugf("worker Invoke: %s, %d", function, len(args))
 	ret, err := this.RunImpl(function, args)
 	if err != nil {
 		this.logger.Debugf("worker Invoke error: %s", err.Error())
 	}
-	
+
 	// Error processing
-//	argsWithComma := strings.Join(args, ",")
-//	status := "OK"
-//	message := ""
-//	payload := fmt.Sprintf("%s(%s)", function, argsWithComma)
-//
-//	if err != nil {
-//		elements := strings.Split(fmt.Sprintf("%v", err), "|")
-//		status = elements[0]
-//		if len(elements) >= 2 {
-//			message = elements[1]
-//		}
-//	}
-//
-//	this.putInvokingStatus(&InvokingStatus{this.db.GetTxID(), status, message, payload})
-//
-//	return ret, nil
+	//	argsWithComma := strings.Join(args, ",")
+	//	status := "OK"
+	//	message := ""
+	//	payload := fmt.Sprintf("%s(%s)", function, argsWithComma)
+	//
+	//	if err != nil {
+	//		elements := strings.Split(fmt.Sprintf("%v", err), "|")
+	//		status = elements[0]
+	//		if len(elements) >= 2 {
+	//			message = elements[1]
+	//		}
+	//	}
+	//
+	//	this.putInvokingStatus(&InvokingStatus{this.db.GetTxID(), status, message, payload})
+	//
+	//	return ret, nil
 	return ret, err
 }
 
@@ -116,8 +116,8 @@ func (this *HDLS) Invoke(function string, args []string) ([]byte, error) {
 func (this *HDLS) Query(function string, args []string) ([]byte, error) {
 	this.loadPreference()
 
-	this.logger.Debugf("worker Query: %s, %d", function, len(args));
-	
+	this.logger.Debugf("worker Query: %s, %d", function, len(args))
+
 	if function == "query" {
 		var A string // Entities
 		var err error
