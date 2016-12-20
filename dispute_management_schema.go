@@ -1,3 +1,4 @@
+package main
 // Transaction and customer identification structure
 type TransactionIdentification struct {
 	CustomerId string `json:"customerId"`//@index
