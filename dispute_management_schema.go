@@ -27,13 +27,14 @@ type TransactionInfos struct {
 
 // Invovled party information structure. Used to represent Merchant, PISP and Bank transaction information.
 type InvolvedParty struct {
-	Id              string           `json:"id"` //@PK
-	Name            string           `json:"name"`
-	Branch          string           `json:"branch"`
-	Terminal        string           `json:"terminal"`
-	Cashier         string           `json:"cashier"`
-	TransactionInfo *TransactionInfo `json:"transaction"`
-	Receipts        []string         `json:"receipts"`
+	Id            string           `json:"id"` //@PK
+	Name          string           `json:"name"`
+	Branch        string           `json:"branch"`
+	Terminal      string           `json:"terminal"`
+	Cashier       string           `json:"cashier"`
+	Transaction   *TransactionInfo `json:"transaction"`
+	TransactionId string           //@index
+	Receipts      []string         `json:"receipts"`
 }
 
 type InvolvedPartys struct {
@@ -42,11 +43,12 @@ type InvolvedPartys struct {
 
 // Invovled party information structure. Used to represent Merchant, PISP and Bank transaction information.
 type Resolution struct {
-	Id              string           `json:"id"`      //@PK
-	Outcome         string           `json:"outcome"` //@index
-	Description     string           `json:"description"`
-	ResolutionTime  string           `json:"resolutionTime"`
-	TransactionInfo *TransactionInfo `json:"transaction"`
+	Id             string           `json:"id"`      //@PK
+	Outcome        string           `json:"outcome"` //@index
+	Description    string           `json:"description"`
+	ResolutionTime string           `json:"resolutionTime"`
+	Transaction    *TransactionInfo `json:"transaction"`
+	TransactionId  string           //@index
 }
 
 type Resolutions struct {
@@ -55,18 +57,23 @@ type Resolutions struct {
 
 // Customer initiated dispute structure
 type CustomerDispute struct {
-	Id          string                     `json:"disputeId"` //@PK
-	Transaction *TransactionIdentification `json:"transaction"`
-	DisputeType string                     `json:"disputetype"`
-	Comments    string                     `json:"comments"`
-	Customer    *InvolvedParty             `json:"customer"`
-	Bank        *InvolvedParty             `json:"bank"`
-	PISP        *InvolvedParty             `json:"pisp"`
-	Merchant    *InvolvedParty             `json:"merchant"`
-	Status      string                     `json:"status"` //@index
-	CreatedDate string                     `json:"created"`
-	LastUpdated string                     `json:"updated"`
-	Resolution  *Resolution                `json:"resolution"`
+	Id           string                     `json:"disputeId"` //@PK
+	Transaction  *TransactionIdentification `json:"transaction"`
+	DisputeType  string                     `json:"disputetype"`
+	Comments     string                     `json:"comments"`
+	Customer     *InvolvedParty             `json:"customer"`
+	CustomerId   string                     //@index
+	Bank         *InvolvedParty             `json:"bank"`
+	BankId       string                     //@index
+	PISP         *InvolvedParty             `json:"pisp"`
+	PISPId       string                     //@index
+	Merchant     *InvolvedParty             `json:"merchant"`
+	MerchantId   string                     //@index
+	Status       string                     `json:"status"` //@index
+	CreatedDate  string                     `json:"created"`
+	LastUpdated  string                     `json:"updated"`
+	Resolution   *Resolution                `json:"resolution"`
+	ResolutionId string                     //@index
 }
 
 type CustomerDisputes struct {
