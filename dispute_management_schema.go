@@ -14,11 +14,11 @@ type TransactionIdentifications struct {
 
 // Transaction information structure
 type TransactionInfo struct {
-	Id              string  `json:"id"`            //@PK
-	TransactionId   string  `json:"transactionId"` //@index
-	Amount          float64 `json:"amount"`
-	Currency        string  `json:"currency"`
-	TransactionTime string  `json:"time"`
+	Id              string `json:"id"`            //@PK
+	TransactionId   string `json:"transactionId"` //@index
+	Amount          string `json:"amount"`
+	Currency        string `json:"currency"`
+	TransactionTime string `json:"time"`
 }
 
 type TransactionInfos struct {
