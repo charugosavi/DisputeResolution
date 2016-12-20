@@ -289,7 +289,7 @@ func (this *HDLS) addTransactionIdentification(jsonStr string) error {
 }
 
 func (this *HDLS) idTransactionIdentification(x *TransactionIdentification) (string, error) {
-	return this.db.GetTxID(), nil
+	return x.Id, nil
 }
 
 func (this *HDLS) deleteTransactionIdentification(x *TransactionIdentification) error {
@@ -397,7 +397,7 @@ func (this *HDLS) addTransactionInfo(jsonStr string) error {
 }
 
 func (this *HDLS) idTransactionInfo(x *TransactionInfo) (string, error) {
-	return this.db.GetTxID(), nil
+	return x.Id, nil
 }
 
 func (this *HDLS) deleteTransactionInfo(x *TransactionInfo) error {
@@ -477,7 +477,7 @@ func (this *HDLS) addInvolvedParty(jsonStr string) error {
 }
 
 func (this *HDLS) idInvolvedParty(x *InvolvedParty) (string, error) {
-	return this.db.GetTxID(), nil
+	return x.Id, nil
 }
 
 func (this *HDLS) deleteInvolvedParty(x *InvolvedParty) error {
@@ -594,7 +594,7 @@ func (this *HDLS) addResolution(jsonStr string) error {
 }
 
 func (this *HDLS) idResolution(x *Resolution) (string, error) {
-	return this.db.GetTxID(), nil
+	return x.Id, nil
 }
 
 func (this *HDLS) deleteResolution(x *Resolution) error {
