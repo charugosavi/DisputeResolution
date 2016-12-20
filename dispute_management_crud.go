@@ -1255,8 +1255,8 @@ func (this *HDLS) overwritePISP(x *PISP) error {
 func (this *HDLS) refIdResolutionOutcome(v string) string {
 	return fmt.Sprintf("Resolution.Outcome=%v", v)
 }
-func (this *HDLS) refIdResolutionTransactionId(v string) string {
-	return fmt.Sprintf("Resolution.TransactionId=%v", v)
+func (this *HDLS) refIdResolutionTransactionInfoId(v string) string {
+	return fmt.Sprintf("Resolution.TransactionInfoId=%v", v)
 }
 
 func (this *HDLS) putResolution(x *Resolution) error {
@@ -1265,7 +1265,7 @@ func (this *HDLS) putResolution(x *Resolution) error {
 	}
 
 	dst := x	// copy
-	dst.Transaction = nil
+	dst.TransactionInfo = nil
 	
 	err := this.putA("Resolution", dst.Id, dst)
 	if err != nil {
@@ -1290,7 +1290,7 @@ func (this *HDLS) putResolution(x *Resolution) error {
 		return err
 	}
 	
-	refId = this.refIdResolutionTransactionId(x.TransactionId)
+	refId = this.refIdResolutionTransactionInfoId(x.TransactionInfoId)
 	ref, _ = this.getReference(refId)
 	if ref == nil {
 		ref = &Reference{
@@ -1322,7 +1322,7 @@ func (this *HDLS) getResolution(id string) (*Resolution, error) {
 		return nil, nil
 	}
 
-	x.Transaction, err = this.getTransaction(x.TransactionId)
+	x.TransactionInfo, err = this.getTransactionInfo(x.TransactionInfoId)
 	if err != nil {
 		return nil, err
 	}
@@ -1342,7 +1342,7 @@ func (this *HDLS) listResolutions() (*Resolutions, error) {
 	for _, row := range rows {
 		var x Resolution 
 		if this.val(row, &x) == nil {
-			x.Transaction, err = this.getTransaction(x.TransactionId)
+			x.TransactionInfo, err = this.getTransactionInfo(x.TransactionInfoId)
 			if err != nil {
 				continue
 			}
@@ -1368,10 +1368,10 @@ func (this *HDLS) listResolutionsByOutcome(v string) (*Resolutions, error) {
 
 	return &xs, nil
 }
-func (this *HDLS) listResolutionsByTransactionId(v string) (*Resolutions, error) {
+func (this *HDLS) listResolutionsByTransactionInfoId(v string) (*Resolutions, error) {
 
 	var xs Resolutions
-	refId := this.refIdResolutionTransactionId(v)
+	refId := this.refIdResolutionTransactionInfoId(v)
 	reference, _ := this.getReference(refId)
 	if reference != nil {
 		for _, id := range reference.Ids {
@@ -1426,7 +1426,7 @@ func (this *HDLS) deleteResolution(x *Resolution) error {
 			this.deleteReference(ref)
 		}
 	}
-	refId = this.refIdResolutionTransactionId(curr.TransactionId)
+	refId = this.refIdResolutionTransactionInfoId(curr.TransactionInfoId)
 	ref, _ = this.getReference(refId)
 	if ref != nil {
 		ref.Ids = remove(ref.Ids, x.Id)

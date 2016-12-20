@@ -85,12 +85,12 @@ type PISPs struct {
 
 // Invovled party information structure. Used to represent Merchant, PISP and Bank transaction information.
 type Resolution struct {
-	Id             string           `json:"id"`      //@PK
-	Outcome        string           `json:"outcome"` //@index
-	Description    string           `json:"description"`
-	ResolutionTime string           `json:"resolutionTime"`
-	Transaction    *TransactionInfo `json:"transaction"`
-	TransactionId  string           //@index
+	Id                string           `json:"id"`      //@PK
+	Outcome           string           `json:"outcome"` //@index
+	Description       string           `json:"description"`
+	ResolutionTime    string           `json:"resolutionTime"`
+	TransactionInfo   *TransactionInfo `json:"transaction"`
+	TransactionInfoId string           //@index
 }
 
 type Resolutions struct {
