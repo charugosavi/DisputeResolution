@@ -427,6 +427,9 @@ func (this *HDLS) overwriteTransactionIdentification(x *TransactionIdentificatio
 // 3. TRANSACTIONINFO 
 //------------------------
 
+func (this *HDLS) refIdTransactionInfoTransactionId(v string) string {
+	return fmt.Sprintf("TransactionInfo.TransactionId=%v", v)
+}
 
 func (this *HDLS) putTransactionInfo(x *TransactionInfo) error {
 	if x.Id == "" {
@@ -440,6 +443,24 @@ func (this *HDLS) putTransactionInfo(x *TransactionInfo) error {
 		return err
 	}
 
+	var ref *Reference
+	var refId string
+	refId = this.refIdTransactionInfoTransactionId(x.TransactionId)
+	ref, _ = this.getReference(refId)
+	if ref == nil {
+		ref = &Reference{
+			Id : refId,
+			Ids: []string{dst.Id},
+		}
+		err = this.putReference(ref)
+	} else {
+		ref.Ids = append(ref.Ids, dst.Id)
+		err = this.overwriteReference(ref)
+	}
+	if err != nil {
+		return err
+	}
+	
 
 	return nil
 }
@@ -478,6 +499,22 @@ func (this *HDLS) listTransactionInfos() (*TransactionInfos, error) {
 	return &xs, nil
 }
 
+func (this *HDLS) listTransactionInfosByTransactionId(v string) (*TransactionInfos, error) {
+
+	var xs TransactionInfos
+	refId := this.refIdTransactionInfoTransactionId(v)
+	reference, _ := this.getReference(refId)
+	if reference != nil {
+		for _, id := range reference.Ids {
+			x, _ := this.getTransactionInfo(id)
+			if x != nil {
+				xs.Data = append(xs.Data, *x)
+			}
+		}
+	}
+
+	return &xs, nil
+}
 
 func (this *HDLS) addTransactionInfo(jsonStr string) error {
 
@@ -498,7 +535,28 @@ func (this *HDLS) deleteTransactionInfo(x *TransactionInfo) error {
 
 	var err error
 
+	var ref *Reference
+	var refId string
 
+	curr, err := this.getTransactionInfo(x.Id)
+	if err != nil {
+		return err
+	} else if curr == nil {
+		return errors.New("NOT_FOUND")
+	}
+
+	refId = this.refIdTransactionInfoTransactionId(curr.TransactionId)
+	ref, _ = this.getReference(refId)
+	if ref != nil {
+		ref.Ids = remove(ref.Ids, x.Id)
+		this.deleteReference(ref)
+		
+		if len(ref.Ids) > 0 {
+			this.overwriteReference(ref)
+		} else {
+			this.deleteReference(ref)
+		}
+	}
 
 	err = this.delete("TransactionInfo", x.Id)
 	if err != nil {
@@ -934,7 +992,7 @@ func (this *HDLS) addCustomerDispute(jsonStr string) error {
 }
 
 func (this *HDLS) idCustomerDispute(x *CustomerDispute) (string, error) {
-	return x.DisputeId, nil
+	return x.Id, nil
 }
 
 func (this *HDLS) deleteCustomerDispute(x *CustomerDispute) error {

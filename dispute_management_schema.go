@@ -14,8 +14,8 @@ type TransactionIdentifications struct {
 
 // Transaction information structure
 type TransactionInfo struct {
-	Id              string  `json:"id"` //@PK
-	TransactionId   string  `json:"transactionId"`
+	Id              string  `json:"id"`            //@PK
+	TransactionId   string  `json:"transactionId"` //@index
 	Amount          float64 `json:"amount"`
 	Currency        string  `json:"currency"`
 	TransactionTime string  `json:"time"`
@@ -55,7 +55,7 @@ type Resolutions struct {
 
 // Customer initiated dispute structure
 type CustomerDispute struct {
-	DisputeId   string                     `json:"disputeId"` //@PK
+	Id          string                     `json:"disputeId"` //@PK
 	Transaction *TransactionIdentification `json:"transaction"`
 	DisputeType string                     `json:"disputetype"`
 	Comments    string                     `json:"comments"`
