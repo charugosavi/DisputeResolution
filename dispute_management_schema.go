@@ -27,13 +27,13 @@ type TransactionInfos struct {
 
 // Invovled party information structure. Used to represent Merchant, PISP and Bank transaction information.
 type InvolvedParty struct {
-	Id          string           `json:"id"` //@PK
-	Name        string           `json:"name"`
-	Branch      string           `json:"branch"`
-	Terminal    string           `json:"terminal"`
-	Cashier     string           `json:"cashier"`
-	Transaction *TransactionInfo `json:"transaction"`
-	Receipts    []string         `json:"receipts"`
+	Id              string           `json:"id"` //@PK
+	Name            string           `json:"name"`
+	Branch          string           `json:"branch"`
+	Terminal        string           `json:"terminal"`
+	Cashier         string           `json:"cashier"`
+	TransactionInfo *TransactionInfo `json:"transaction"`
+	Receipts        []string         `json:"receipts"`
 }
 
 type InvolvedPartys struct {
@@ -42,11 +42,11 @@ type InvolvedPartys struct {
 
 // Invovled party information structure. Used to represent Merchant, PISP and Bank transaction information.
 type Resolution struct {
-	Id             string           `json:"id"`      //@PK
-	Outcome        string           `json:"outcome"` //@index
-	Description    string           `json:"description"`
-	ResolutionTime string           `json:"resolutionTime"`
-	Transaction    *TransactionInfo `json:"transaction"`
+	Id              string           `json:"id"`      //@PK
+	Outcome         string           `json:"outcome"` //@index
+	Description     string           `json:"description"`
+	ResolutionTime  string           `json:"resolutionTime"`
+	TransactionInfo *TransactionInfo `json:"transaction"`
 }
 
 type Resolutions struct {
