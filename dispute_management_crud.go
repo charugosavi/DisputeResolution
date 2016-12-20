@@ -28,6 +28,10 @@ type Dump struct {
 	Reference *References
 	TransactionIdentification *TransactionIdentifications
 	TransactionInfo *TransactionInfos
+	Customer *Customers
+	Bank *Banks
+	Merchant *Merchants
+	PISP *PISPs
 	Resolution *Resolutions
 	CustomerDispute *CustomerDisputes
 }
@@ -49,6 +53,30 @@ func (this *HDLS) dump() (*Dump, error) {
 	}
 	{
 		d.TransactionInfo, err = this.listTransactionInfos()
+		if err != nil {
+				return nil, err
+		}
+	}
+	{
+		d.Customer, err = this.listCustomers()
+		if err != nil {
+				return nil, err
+		}
+	}
+	{
+		d.Bank, err = this.listBanks()
+		if err != nil {
+				return nil, err
+		}
+	}
+	{
+		d.Merchant, err = this.listMerchants()
+		if err != nil {
+				return nil, err
+		}
+	}
+	{
+		d.PISP, err = this.listPISPs()
 		if err != nil {
 				return nil, err
 		}
@@ -86,6 +114,26 @@ func (this *HDLS) imprt(dump *Dump) (error) {
 			err = this.putTransactionInfo(&x)
 		}
 	}
+	if dump.Customer != nil {
+		for _, x := range dump.Customer.Data {
+			err = this.putCustomer(&x)
+		}
+	}
+	if dump.Bank != nil {
+		for _, x := range dump.Bank.Data {
+			err = this.putBank(&x)
+		}
+	}
+	if dump.Merchant != nil {
+		for _, x := range dump.Merchant.Data {
+			err = this.putMerchant(&x)
+		}
+	}
+	if dump.PISP != nil {
+		for _, x := range dump.PISP.Data {
+			err = this.putPISP(&x)
+		}
+	}
 	if dump.Resolution != nil {
 		for _, x := range dump.Resolution.Data {
 			err = this.putResolution(&x)
@@ -118,7 +166,6 @@ func (this *HDLS) createSchema() {
 		"Bank", 
 		"Merchant", 
 		"PISP", 
-		"InvolvedPartys", 
 		"Resolution", 
 		"CustomerDispute", 
 	}
@@ -628,6 +675,27 @@ func (this *HDLS) getCustomer(id string) (*Customer, error) {
 	return &x, nil
 }
 
+func (this *HDLS) listCustomers() (*Customers, error) {
+	this.logger.Infof("Call: listCustomer")
+
+	rows, err := this.listAllRows("Customer")
+	if err != nil {
+		return nil, err
+	}
+
+	var xs Customers
+	for _, row := range rows {
+		var x Customer 
+		if this.val(row, &x) == nil {
+			x.Transaction, err = this.getTransaction(x.TransactionId)
+			if err != nil {
+				continue
+			}
+			xs.Data = append(xs.Data, x)
+		}
+	}
+	return &xs, nil
+}
 
 func (this *HDLS) listCustomersByTransactionId(v string) (*Customers, error) {
 
@@ -766,6 +834,27 @@ func (this *HDLS) getBank(id string) (*Bank, error) {
 	return &x, nil
 }
 
+func (this *HDLS) listBanks() (*Banks, error) {
+	this.logger.Infof("Call: listBank")
+
+	rows, err := this.listAllRows("Bank")
+	if err != nil {
+		return nil, err
+	}
+
+	var xs Banks
+	for _, row := range rows {
+		var x Bank 
+		if this.val(row, &x) == nil {
+			x.Transaction, err = this.getTransaction(x.TransactionId)
+			if err != nil {
+				continue
+			}
+			xs.Data = append(xs.Data, x)
+		}
+	}
+	return &xs, nil
+}
 
 func (this *HDLS) listBanksByTransactionId(v string) (*Banks, error) {
 
@@ -904,6 +993,27 @@ func (this *HDLS) getMerchant(id string) (*Merchant, error) {
 	return &x, nil
 }
 
+func (this *HDLS) listMerchants() (*Merchants, error) {
+	this.logger.Infof("Call: listMerchant")
+
+	rows, err := this.listAllRows("Merchant")
+	if err != nil {
+		return nil, err
+	}
+
+	var xs Merchants
+	for _, row := range rows {
+		var x Merchant 
+		if this.val(row, &x) == nil {
+			x.Transaction, err = this.getTransaction(x.TransactionId)
+			if err != nil {
+				continue
+			}
+			xs.Data = append(xs.Data, x)
+		}
+	}
+	return &xs, nil
+}
 
 func (this *HDLS) listMerchantsByTransactionId(v string) (*Merchants, error) {
 
@@ -1042,6 +1152,27 @@ func (this *HDLS) getPISP(id string) (*PISP, error) {
 	return &x, nil
 }
 
+func (this *HDLS) listPISPs() (*PISPs, error) {
+	this.logger.Infof("Call: listPISP")
+
+	rows, err := this.listAllRows("PISP")
+	if err != nil {
+		return nil, err
+	}
+
+	var xs PISPs
+	for _, row := range rows {
+		var x PISP 
+		if this.val(row, &x) == nil {
+			x.Transaction, err = this.getTransaction(x.TransactionId)
+			if err != nil {
+				continue
+			}
+			xs.Data = append(xs.Data, x)
+		}
+	}
+	return &xs, nil
+}
 
 func (this *HDLS) listPISPsByTransactionId(v string) (*PISPs, error) {
 
@@ -1118,82 +1249,7 @@ func (this *HDLS) overwritePISP(x *PISP) error {
 	return this.putPISP(x)
 }
 //------------------------
-// 8. INVOLVEDPARTYS 
-//------------------------
-
-
-func (this *HDLS) putInvolvedPartys(x *InvolvedPartys) error {
-	if x.Id == "" {
-		x.Id, _ = this.idInvolvedPartys(x)
-	}
-
-	dst := x	// copy
-	
-	err := this.putA("InvolvedPartys", dst.Id, dst)
-	if err != nil {
-		return err
-	}
-
-
-	return nil
-}
-
-func (this *HDLS) getInvolvedPartys(id string) (*InvolvedPartys, error) {
-	this.logger.Infof("Call: getInvolvedPartys")
-
-	var x InvolvedPartys 
-	err := this.getA("InvolvedPartys", id, &x)
-	if err != nil {
-		this.logger.Infof("Error occured %v\n", err)
-		return nil, err
-	} else if x.Id == "" {
-		return nil, nil
-	}
-
-
-	return &x, nil
-}
-
-
-
-func (this *HDLS) addInvolvedPartys(jsonStr string) error {
-
-	var x InvolvedPartys 
-	err := json.Unmarshal([]byte(jsonStr), &x)
-	if err != nil {
-		return err
-	}
-
-	return this.putInvolvedPartys(&x)
-}
-
-func (this *HDLS) idInvolvedPartys(x *InvolvedPartys) (string, error) {
-	return this.db.GetTxID(), nil
-}
-
-func (this *HDLS) deleteInvolvedPartys(x *InvolvedPartys) error {
-
-	var err error
-
-
-
-	err = this.delete("InvolvedPartys", x.Id)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (this *HDLS) overwriteInvolvedPartys(x *InvolvedPartys) error {
-	if err := this.deleteInvolvedPartys(x); err != nil {
-		return err
-	}
-	
-	return this.putInvolvedPartys(x)
-}
-//------------------------
-// 9. RESOLUTION 
+// 8. RESOLUTION 
 //------------------------
 
 func (this *HDLS) refIdResolutionOutcome(v string) string {
@@ -1399,7 +1455,7 @@ func (this *HDLS) overwriteResolution(x *Resolution) error {
 	return this.putResolution(x)
 }
 //------------------------
-// 10. CUSTOMERDISPUTE 
+// 9. CUSTOMERDISPUTE 
 //------------------------
 
 func (this *HDLS) refIdCustomerDisputeTransactionId(v string) string {

@@ -36,6 +36,9 @@ type Customer struct {
 	TransactionId string           //@index
 	Receipts      []string         `json:"receipts"`
 }
+type Customers struct {
+	Data []Customer
+}
 
 type Bank struct {
 	Id            string           `json:"id"` //@PK
@@ -47,6 +50,9 @@ type Bank struct {
 	TransactionId string           //@index
 	Receipts      []string         `json:"receipts"`
 }
+type Banks struct {
+	Data []Bank
+}
 
 type Merchant struct {
 	Id            string           `json:"id"` //@PK
@@ -57,6 +63,9 @@ type Merchant struct {
 	Transaction   *TransactionInfo `json:"transaction"`
 	TransactionId string           //@index
 	Receipts      []string         `json:"receipts"`
+}
+type Merchants struct {
+	Data []Merchant
 }
 
 type PISP struct {
@@ -70,8 +79,8 @@ type PISP struct {
 	Receipts      []string         `json:"receipts"`
 }
 
-type InvolvedPartys struct {
-	Data []InvolvedParty
+type PISPs struct {
+	Data []PISP
 }
 
 // Invovled party information structure. Used to represent Merchant, PISP and Bank transaction information.
