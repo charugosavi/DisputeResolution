@@ -28,7 +28,6 @@ type Dump struct {
 	Reference *References
 	TransactionIdentification *TransactionIdentifications
 	TransactionInfo *TransactionInfos
-	InvolvedParty *InvolvedPartys
 	Resolution *Resolutions
 	CustomerDispute *CustomerDisputes
 }
@@ -50,12 +49,6 @@ func (this *HDLS) dump() (*Dump, error) {
 	}
 	{
 		d.TransactionInfo, err = this.listTransactionInfos()
-		if err != nil {
-				return nil, err
-		}
-	}
-	{
-		d.InvolvedParty, err = this.listInvolvedPartys()
 		if err != nil {
 				return nil, err
 		}
@@ -93,11 +86,6 @@ func (this *HDLS) imprt(dump *Dump) (error) {
 			err = this.putTransactionInfo(&x)
 		}
 	}
-	if dump.InvolvedParty != nil {
-		for _, x := range dump.InvolvedParty.Data {
-			err = this.putInvolvedParty(&x)
-		}
-	}
 	if dump.Resolution != nil {
 		for _, x := range dump.Resolution.Data {
 			err = this.putResolution(&x)
@@ -126,7 +114,11 @@ func (this *HDLS) createSchema() {
 		"Reference", 
 		"TransactionIdentification", 
 		"TransactionInfo", 
-		"InvolvedParty", 
+		"Customer", 
+		"Bank", 
+		"Merchant", 
+		"PISP", 
+		"InvolvedPartys", 
 		"Resolution", 
 		"CustomerDispute", 
 	}
@@ -574,29 +566,29 @@ func (this *HDLS) overwriteTransactionInfo(x *TransactionInfo) error {
 	return this.putTransactionInfo(x)
 }
 //------------------------
-// 4. INVOLVEDPARTY 
+// 4. CUSTOMER 
 //------------------------
 
-func (this *HDLS) refIdInvolvedPartyTransactionId(v string) string {
-	return fmt.Sprintf("InvolvedParty.TransactionId=%v", v)
+func (this *HDLS) refIdCustomerTransactionId(v string) string {
+	return fmt.Sprintf("Customer.TransactionId=%v", v)
 }
 
-func (this *HDLS) putInvolvedParty(x *InvolvedParty) error {
+func (this *HDLS) putCustomer(x *Customer) error {
 	if x.Id == "" {
-		x.Id, _ = this.idInvolvedParty(x)
+		x.Id, _ = this.idCustomer(x)
 	}
 
 	dst := x	// copy
 	dst.Transaction = nil
 	
-	err := this.putA("InvolvedParty", dst.Id, dst)
+	err := this.putA("Customer", dst.Id, dst)
 	if err != nil {
 		return err
 	}
 
 	var ref *Reference
 	var refId string
-	refId = this.refIdInvolvedPartyTransactionId(x.TransactionId)
+	refId = this.refIdCustomerTransactionId(x.TransactionId)
 	ref, _ = this.getReference(refId)
 	if ref == nil {
 		ref = &Reference{
@@ -616,11 +608,11 @@ func (this *HDLS) putInvolvedParty(x *InvolvedParty) error {
 	return nil
 }
 
-func (this *HDLS) getInvolvedParty(id string) (*InvolvedParty, error) {
-	this.logger.Infof("Call: getInvolvedParty")
+func (this *HDLS) getCustomer(id string) (*Customer, error) {
+	this.logger.Infof("Call: getCustomer")
 
-	var x InvolvedParty 
-	err := this.getA("InvolvedParty", id, &x)
+	var x Customer 
+	err := this.getA("Customer", id, &x)
 	if err != nil {
 		this.logger.Infof("Error occured %v\n", err)
 		return nil, err
@@ -636,36 +628,15 @@ func (this *HDLS) getInvolvedParty(id string) (*InvolvedParty, error) {
 	return &x, nil
 }
 
-func (this *HDLS) listInvolvedPartys() (*InvolvedPartys, error) {
-	this.logger.Infof("Call: listInvolvedParty")
 
-	rows, err := this.listAllRows("InvolvedParty")
-	if err != nil {
-		return nil, err
-	}
+func (this *HDLS) listCustomersByTransactionId(v string) (*Customers, error) {
 
-	var xs InvolvedPartys
-	for _, row := range rows {
-		var x InvolvedParty 
-		if this.val(row, &x) == nil {
-			x.Transaction, err = this.getTransaction(x.TransactionId)
-			if err != nil {
-				continue
-			}
-			xs.Data = append(xs.Data, x)
-		}
-	}
-	return &xs, nil
-}
-
-func (this *HDLS) listInvolvedPartysByTransactionId(v string) (*InvolvedPartys, error) {
-
-	var xs InvolvedPartys
-	refId := this.refIdInvolvedPartyTransactionId(v)
+	var xs Customers
+	refId := this.refIdCustomerTransactionId(v)
 	reference, _ := this.getReference(refId)
 	if reference != nil {
 		for _, id := range reference.Ids {
-			x, _ := this.getInvolvedParty(id)
+			x, _ := this.getCustomer(id)
 			if x != nil {
 				xs.Data = append(xs.Data, *x)
 			}
@@ -675,36 +646,36 @@ func (this *HDLS) listInvolvedPartysByTransactionId(v string) (*InvolvedPartys, 
 	return &xs, nil
 }
 
-func (this *HDLS) addInvolvedParty(jsonStr string) error {
+func (this *HDLS) addCustomer(jsonStr string) error {
 
-	var x InvolvedParty 
+	var x Customer 
 	err := json.Unmarshal([]byte(jsonStr), &x)
 	if err != nil {
 		return err
 	}
 
-	return this.putInvolvedParty(&x)
+	return this.putCustomer(&x)
 }
 
-func (this *HDLS) idInvolvedParty(x *InvolvedParty) (string, error) {
+func (this *HDLS) idCustomer(x *Customer) (string, error) {
 	return x.Id, nil
 }
 
-func (this *HDLS) deleteInvolvedParty(x *InvolvedParty) error {
+func (this *HDLS) deleteCustomer(x *Customer) error {
 
 	var err error
 
 	var ref *Reference
 	var refId string
 
-	curr, err := this.getInvolvedParty(x.Id)
+	curr, err := this.getCustomer(x.Id)
 	if err != nil {
 		return err
 	} else if curr == nil {
 		return errors.New("NOT_FOUND")
 	}
 
-	refId = this.refIdInvolvedPartyTransactionId(curr.TransactionId)
+	refId = this.refIdCustomerTransactionId(curr.TransactionId)
 	ref, _ = this.getReference(refId)
 	if ref != nil {
 		ref.Ids = remove(ref.Ids, x.Id)
@@ -717,7 +688,7 @@ func (this *HDLS) deleteInvolvedParty(x *InvolvedParty) error {
 		}
 	}
 
-	err = this.delete("InvolvedParty", x.Id)
+	err = this.delete("Customer", x.Id)
 	if err != nil {
 		return err
 	}
@@ -725,15 +696,504 @@ func (this *HDLS) deleteInvolvedParty(x *InvolvedParty) error {
 	return nil
 }
 
-func (this *HDLS) overwriteInvolvedParty(x *InvolvedParty) error {
-	if err := this.deleteInvolvedParty(x); err != nil {
+func (this *HDLS) overwriteCustomer(x *Customer) error {
+	if err := this.deleteCustomer(x); err != nil {
 		return err
 	}
 	
-	return this.putInvolvedParty(x)
+	return this.putCustomer(x)
 }
 //------------------------
-// 5. RESOLUTION 
+// 5. BANK 
+//------------------------
+
+func (this *HDLS) refIdBankTransactionId(v string) string {
+	return fmt.Sprintf("Bank.TransactionId=%v", v)
+}
+
+func (this *HDLS) putBank(x *Bank) error {
+	if x.Id == "" {
+		x.Id, _ = this.idBank(x)
+	}
+
+	dst := x	// copy
+	dst.Transaction = nil
+	
+	err := this.putA("Bank", dst.Id, dst)
+	if err != nil {
+		return err
+	}
+
+	var ref *Reference
+	var refId string
+	refId = this.refIdBankTransactionId(x.TransactionId)
+	ref, _ = this.getReference(refId)
+	if ref == nil {
+		ref = &Reference{
+			Id : refId,
+			Ids: []string{dst.Id},
+		}
+		err = this.putReference(ref)
+	} else {
+		ref.Ids = append(ref.Ids, dst.Id)
+		err = this.overwriteReference(ref)
+	}
+	if err != nil {
+		return err
+	}
+	
+
+	return nil
+}
+
+func (this *HDLS) getBank(id string) (*Bank, error) {
+	this.logger.Infof("Call: getBank")
+
+	var x Bank 
+	err := this.getA("Bank", id, &x)
+	if err != nil {
+		this.logger.Infof("Error occured %v\n", err)
+		return nil, err
+	} else if x.Id == "" {
+		return nil, nil
+	}
+
+	x.Transaction, err = this.getTransaction(x.TransactionId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &x, nil
+}
+
+
+func (this *HDLS) listBanksByTransactionId(v string) (*Banks, error) {
+
+	var xs Banks
+	refId := this.refIdBankTransactionId(v)
+	reference, _ := this.getReference(refId)
+	if reference != nil {
+		for _, id := range reference.Ids {
+			x, _ := this.getBank(id)
+			if x != nil {
+				xs.Data = append(xs.Data, *x)
+			}
+		}
+	}
+
+	return &xs, nil
+}
+
+func (this *HDLS) addBank(jsonStr string) error {
+
+	var x Bank 
+	err := json.Unmarshal([]byte(jsonStr), &x)
+	if err != nil {
+		return err
+	}
+
+	return this.putBank(&x)
+}
+
+func (this *HDLS) idBank(x *Bank) (string, error) {
+	return x.Id, nil
+}
+
+func (this *HDLS) deleteBank(x *Bank) error {
+
+	var err error
+
+	var ref *Reference
+	var refId string
+
+	curr, err := this.getBank(x.Id)
+	if err != nil {
+		return err
+	} else if curr == nil {
+		return errors.New("NOT_FOUND")
+	}
+
+	refId = this.refIdBankTransactionId(curr.TransactionId)
+	ref, _ = this.getReference(refId)
+	if ref != nil {
+		ref.Ids = remove(ref.Ids, x.Id)
+		this.deleteReference(ref)
+		
+		if len(ref.Ids) > 0 {
+			this.overwriteReference(ref)
+		} else {
+			this.deleteReference(ref)
+		}
+	}
+
+	err = this.delete("Bank", x.Id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (this *HDLS) overwriteBank(x *Bank) error {
+	if err := this.deleteBank(x); err != nil {
+		return err
+	}
+	
+	return this.putBank(x)
+}
+//------------------------
+// 6. MERCHANT 
+//------------------------
+
+func (this *HDLS) refIdMerchantTransactionId(v string) string {
+	return fmt.Sprintf("Merchant.TransactionId=%v", v)
+}
+
+func (this *HDLS) putMerchant(x *Merchant) error {
+	if x.Id == "" {
+		x.Id, _ = this.idMerchant(x)
+	}
+
+	dst := x	// copy
+	dst.Transaction = nil
+	
+	err := this.putA("Merchant", dst.Id, dst)
+	if err != nil {
+		return err
+	}
+
+	var ref *Reference
+	var refId string
+	refId = this.refIdMerchantTransactionId(x.TransactionId)
+	ref, _ = this.getReference(refId)
+	if ref == nil {
+		ref = &Reference{
+			Id : refId,
+			Ids: []string{dst.Id},
+		}
+		err = this.putReference(ref)
+	} else {
+		ref.Ids = append(ref.Ids, dst.Id)
+		err = this.overwriteReference(ref)
+	}
+	if err != nil {
+		return err
+	}
+	
+
+	return nil
+}
+
+func (this *HDLS) getMerchant(id string) (*Merchant, error) {
+	this.logger.Infof("Call: getMerchant")
+
+	var x Merchant 
+	err := this.getA("Merchant", id, &x)
+	if err != nil {
+		this.logger.Infof("Error occured %v\n", err)
+		return nil, err
+	} else if x.Id == "" {
+		return nil, nil
+	}
+
+	x.Transaction, err = this.getTransaction(x.TransactionId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &x, nil
+}
+
+
+func (this *HDLS) listMerchantsByTransactionId(v string) (*Merchants, error) {
+
+	var xs Merchants
+	refId := this.refIdMerchantTransactionId(v)
+	reference, _ := this.getReference(refId)
+	if reference != nil {
+		for _, id := range reference.Ids {
+			x, _ := this.getMerchant(id)
+			if x != nil {
+				xs.Data = append(xs.Data, *x)
+			}
+		}
+	}
+
+	return &xs, nil
+}
+
+func (this *HDLS) addMerchant(jsonStr string) error {
+
+	var x Merchant 
+	err := json.Unmarshal([]byte(jsonStr), &x)
+	if err != nil {
+		return err
+	}
+
+	return this.putMerchant(&x)
+}
+
+func (this *HDLS) idMerchant(x *Merchant) (string, error) {
+	return x.Id, nil
+}
+
+func (this *HDLS) deleteMerchant(x *Merchant) error {
+
+	var err error
+
+	var ref *Reference
+	var refId string
+
+	curr, err := this.getMerchant(x.Id)
+	if err != nil {
+		return err
+	} else if curr == nil {
+		return errors.New("NOT_FOUND")
+	}
+
+	refId = this.refIdMerchantTransactionId(curr.TransactionId)
+	ref, _ = this.getReference(refId)
+	if ref != nil {
+		ref.Ids = remove(ref.Ids, x.Id)
+		this.deleteReference(ref)
+		
+		if len(ref.Ids) > 0 {
+			this.overwriteReference(ref)
+		} else {
+			this.deleteReference(ref)
+		}
+	}
+
+	err = this.delete("Merchant", x.Id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (this *HDLS) overwriteMerchant(x *Merchant) error {
+	if err := this.deleteMerchant(x); err != nil {
+		return err
+	}
+	
+	return this.putMerchant(x)
+}
+//------------------------
+// 7. PISP 
+//------------------------
+
+func (this *HDLS) refIdPISPTransactionId(v string) string {
+	return fmt.Sprintf("PISP.TransactionId=%v", v)
+}
+
+func (this *HDLS) putPISP(x *PISP) error {
+	if x.Id == "" {
+		x.Id, _ = this.idPISP(x)
+	}
+
+	dst := x	// copy
+	dst.Transaction = nil
+	
+	err := this.putA("PISP", dst.Id, dst)
+	if err != nil {
+		return err
+	}
+
+	var ref *Reference
+	var refId string
+	refId = this.refIdPISPTransactionId(x.TransactionId)
+	ref, _ = this.getReference(refId)
+	if ref == nil {
+		ref = &Reference{
+			Id : refId,
+			Ids: []string{dst.Id},
+		}
+		err = this.putReference(ref)
+	} else {
+		ref.Ids = append(ref.Ids, dst.Id)
+		err = this.overwriteReference(ref)
+	}
+	if err != nil {
+		return err
+	}
+	
+
+	return nil
+}
+
+func (this *HDLS) getPISP(id string) (*PISP, error) {
+	this.logger.Infof("Call: getPISP")
+
+	var x PISP 
+	err := this.getA("PISP", id, &x)
+	if err != nil {
+		this.logger.Infof("Error occured %v\n", err)
+		return nil, err
+	} else if x.Id == "" {
+		return nil, nil
+	}
+
+	x.Transaction, err = this.getTransaction(x.TransactionId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &x, nil
+}
+
+
+func (this *HDLS) listPISPsByTransactionId(v string) (*PISPs, error) {
+
+	var xs PISPs
+	refId := this.refIdPISPTransactionId(v)
+	reference, _ := this.getReference(refId)
+	if reference != nil {
+		for _, id := range reference.Ids {
+			x, _ := this.getPISP(id)
+			if x != nil {
+				xs.Data = append(xs.Data, *x)
+			}
+		}
+	}
+
+	return &xs, nil
+}
+
+func (this *HDLS) addPISP(jsonStr string) error {
+
+	var x PISP 
+	err := json.Unmarshal([]byte(jsonStr), &x)
+	if err != nil {
+		return err
+	}
+
+	return this.putPISP(&x)
+}
+
+func (this *HDLS) idPISP(x *PISP) (string, error) {
+	return x.Id, nil
+}
+
+func (this *HDLS) deletePISP(x *PISP) error {
+
+	var err error
+
+	var ref *Reference
+	var refId string
+
+	curr, err := this.getPISP(x.Id)
+	if err != nil {
+		return err
+	} else if curr == nil {
+		return errors.New("NOT_FOUND")
+	}
+
+	refId = this.refIdPISPTransactionId(curr.TransactionId)
+	ref, _ = this.getReference(refId)
+	if ref != nil {
+		ref.Ids = remove(ref.Ids, x.Id)
+		this.deleteReference(ref)
+		
+		if len(ref.Ids) > 0 {
+			this.overwriteReference(ref)
+		} else {
+			this.deleteReference(ref)
+		}
+	}
+
+	err = this.delete("PISP", x.Id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (this *HDLS) overwritePISP(x *PISP) error {
+	if err := this.deletePISP(x); err != nil {
+		return err
+	}
+	
+	return this.putPISP(x)
+}
+//------------------------
+// 8. INVOLVEDPARTYS 
+//------------------------
+
+
+func (this *HDLS) putInvolvedPartys(x *InvolvedPartys) error {
+	if x.Id == "" {
+		x.Id, _ = this.idInvolvedPartys(x)
+	}
+
+	dst := x	// copy
+	
+	err := this.putA("InvolvedPartys", dst.Id, dst)
+	if err != nil {
+		return err
+	}
+
+
+	return nil
+}
+
+func (this *HDLS) getInvolvedPartys(id string) (*InvolvedPartys, error) {
+	this.logger.Infof("Call: getInvolvedPartys")
+
+	var x InvolvedPartys 
+	err := this.getA("InvolvedPartys", id, &x)
+	if err != nil {
+		this.logger.Infof("Error occured %v\n", err)
+		return nil, err
+	} else if x.Id == "" {
+		return nil, nil
+	}
+
+
+	return &x, nil
+}
+
+
+
+func (this *HDLS) addInvolvedPartys(jsonStr string) error {
+
+	var x InvolvedPartys 
+	err := json.Unmarshal([]byte(jsonStr), &x)
+	if err != nil {
+		return err
+	}
+
+	return this.putInvolvedPartys(&x)
+}
+
+func (this *HDLS) idInvolvedPartys(x *InvolvedPartys) (string, error) {
+	return this.db.GetTxID(), nil
+}
+
+func (this *HDLS) deleteInvolvedPartys(x *InvolvedPartys) error {
+
+	var err error
+
+
+
+	err = this.delete("InvolvedPartys", x.Id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (this *HDLS) overwriteInvolvedPartys(x *InvolvedPartys) error {
+	if err := this.deleteInvolvedPartys(x); err != nil {
+		return err
+	}
+	
+	return this.putInvolvedPartys(x)
+}
+//------------------------
+// 9. RESOLUTION 
 //------------------------
 
 func (this *HDLS) refIdResolutionOutcome(v string) string {
@@ -939,9 +1399,12 @@ func (this *HDLS) overwriteResolution(x *Resolution) error {
 	return this.putResolution(x)
 }
 //------------------------
-// 6. CUSTOMERDISPUTE 
+// 10. CUSTOMERDISPUTE 
 //------------------------
 
+func (this *HDLS) refIdCustomerDisputeTransactionId(v string) string {
+	return fmt.Sprintf("CustomerDispute.TransactionId=%v", v)
+}
 func (this *HDLS) refIdCustomerDisputeCustomerId(v string) string {
 	return fmt.Sprintf("CustomerDispute.CustomerId=%v", v)
 }
@@ -981,6 +1444,22 @@ func (this *HDLS) putCustomerDispute(x *CustomerDispute) error {
 
 	var ref *Reference
 	var refId string
+	refId = this.refIdCustomerDisputeTransactionId(x.TransactionId)
+	ref, _ = this.getReference(refId)
+	if ref == nil {
+		ref = &Reference{
+			Id : refId,
+			Ids: []string{dst.Id},
+		}
+		err = this.putReference(ref)
+	} else {
+		ref.Ids = append(ref.Ids, dst.Id)
+		err = this.overwriteReference(ref)
+	}
+	if err != nil {
+		return err
+	}
+	
 	refId = this.refIdCustomerDisputeCustomerId(x.CustomerId)
 	ref, _ = this.getReference(refId)
 	if ref == nil {
@@ -1163,6 +1642,22 @@ func (this *HDLS) listCustomerDisputes() (*CustomerDisputes, error) {
 	return &xs, nil
 }
 
+func (this *HDLS) listCustomerDisputesByTransactionId(v string) (*CustomerDisputes, error) {
+
+	var xs CustomerDisputes
+	refId := this.refIdCustomerDisputeTransactionId(v)
+	reference, _ := this.getReference(refId)
+	if reference != nil {
+		for _, id := range reference.Ids {
+			x, _ := this.getCustomerDispute(id)
+			if x != nil {
+				xs.Data = append(xs.Data, *x)
+			}
+		}
+	}
+
+	return &xs, nil
+}
 func (this *HDLS) listCustomerDisputesByCustomerId(v string) (*CustomerDisputes, error) {
 
 	var xs CustomerDisputes
@@ -1289,6 +1784,18 @@ func (this *HDLS) deleteCustomerDispute(x *CustomerDispute) error {
 		return errors.New("NOT_FOUND")
 	}
 
+	refId = this.refIdCustomerDisputeTransactionId(curr.TransactionId)
+	ref, _ = this.getReference(refId)
+	if ref != nil {
+		ref.Ids = remove(ref.Ids, x.Id)
+		this.deleteReference(ref)
+		
+		if len(ref.Ids) > 0 {
+			this.overwriteReference(ref)
+		} else {
+			this.deleteReference(ref)
+		}
+	}
 	refId = this.refIdCustomerDisputeCustomerId(curr.CustomerId)
 	ref, _ = this.getReference(refId)
 	if ref != nil {
