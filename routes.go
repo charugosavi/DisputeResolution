@@ -14,38 +14,32 @@ package main
 
 import "errors"
 
-type Status struct {
-	code string
-	msg  string
-}
-
-type Response struct {
-	Contents interface{}
-}
-
-func (this *HDLS) RunImpl(function string, args []string) ([]byte, error) {
+//RunImpl Runs implementation of Invoke function based on function name
+func (hdls *HDLS) RunImpl(function string, args []string) ([]byte, error) {
 
 	// Handle different functions
 	switch function {
 	case "import":
-		return nil, this.imprtJson(args[0])
+		return nil, hdls.imprtJson(args[0])
 
 	//Dispute management functions
 	case "addCustomerDispute":
-		return nil, this.addCustomerDisputeFunction(args)
+		return nil, hdls.addCustomerDisputeFunction(args)
 
+	case "updateCustomerDispute":
+		return nil, hdls.updateCustomerDisputeFunction(args)
 	default:
 		return nil, errors.New("UNKNOWN_INVOCATION|Received unknown function invocation")
 	}
 }
 
-// Query callback representing the query of a chaincode
-func (this *HDLS) QueryImpl(function string, args []string) (interface{}, error) {
+// QueryImpl Query callback representing the query of a chaincode
+func (hdls *HDLS) QueryImpl(function string, args []string) (interface{}, error) {
 	switch function {
 	case "getCustomerDispute":
-		return this.getCustomerDispute(args[0])
+		return hdls.getCustomerDispute(args[0])
 	case "listCustomerDisputes":
-		return this.listCustomerDisputes()
+		return hdls.listCustomerDisputes()
 
 	default:
 		return nil, errors.New("Received unknown function query")
