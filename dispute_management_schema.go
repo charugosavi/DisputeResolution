@@ -8,6 +8,10 @@ type TransactionIdentification struct {
 	TransactionId string `json:"transactionid"`
 }
 
+type TransactionIdentifications struct {
+	Data []TransactionIdentification
+}
+
 // Transaction information structure
 type TransactionInfo struct {
 	Id              string  `json:"id"` //@PK
@@ -15,6 +19,10 @@ type TransactionInfo struct {
 	Amount          float64 `json:"amount"`
 	Currency        string  `json:"currency"`
 	TransactionTime string  `json:"time"`
+}
+
+type TransactionInfos struct {
+	Data []TransactionInfo
 }
 
 // Invovled party information structure. Used to represent Merchant, PISP and Bank transaction information.
@@ -28,6 +36,10 @@ type InvolvedParty struct {
 	Receipts    []string         `json:"receipts"`
 }
 
+type InvolvedPartys struct {
+	Data []InvolvedParty
+}
+
 // Invovled party information structure. Used to represent Merchant, PISP and Bank transaction information.
 type Resolution struct {
 	Id             string           `json:"id"`      //@PK
@@ -35,6 +47,10 @@ type Resolution struct {
 	Description    string           `json:"description"`
 	ResolutionTime string           `json:"resolutionTime"`
 	Transaction    *TransactionInfo `json:"transaction"`
+}
+
+type Resolutions struct {
+	Data []Resolution
 }
 
 // Customer initiated dispute structure
@@ -51,4 +67,8 @@ type CustomerDispute struct {
 	CreatedDate string                     `json:"created"`
 	LastUpdated string                     `json:"updated"`
 	Resolution  *Resolution                `json:"resolution"`
+}
+
+type CustomerDisputes struct {
+	Data []CustomerDispute
 }
