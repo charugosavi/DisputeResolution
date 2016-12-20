@@ -32,7 +32,7 @@ func (this *HDLS) RunImpl(function string, args []string) ([]byte, error) {
 
 	//Dispute management functions
 	case "addCustomerDispute":
-		return nil, this.addCustomerDisputeFunction(args[0])
+		return nil, this.addCustomerDisputeFunction(args)
 
 	default:
 		return nil, errors.New("UNKNOWN_INVOCATION|Received unknown function invocation")
