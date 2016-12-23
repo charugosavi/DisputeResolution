@@ -1479,6 +1479,9 @@ func (this *HDLS) refIdCustomerDisputeStatus(v string) string {
 func (this *HDLS) refIdCustomerDisputeResolutionId(v string) string {
 	return fmt.Sprintf("CustomerDispute.ResolutionId=%v", v)
 }
+func (this *HDLS) refIdCustomerDisputeOwner(v string) string {
+	return fmt.Sprintf("CustomerDispute.Owner=%v", v)
+}
 
 func (this *HDLS) putCustomerDispute(x *CustomerDispute) error {
 	if x.Id == "" {
@@ -1597,6 +1600,22 @@ func (this *HDLS) putCustomerDispute(x *CustomerDispute) error {
 	}
 	
 	refId = this.refIdCustomerDisputeResolutionId(x.ResolutionId)
+	ref, _ = this.getReference(refId)
+	if ref == nil {
+		ref = &Reference{
+			Id : refId,
+			Ids: []string{dst.Id},
+		}
+		err = this.putReference(ref)
+	} else {
+		ref.Ids = append(ref.Ids, dst.Id)
+		err = this.overwriteReference(ref)
+	}
+	if err != nil {
+		return err
+	}
+	
+	refId = this.refIdCustomerDisputeOwner(x.Owner)
 	ref, _ = this.getReference(refId)
 	if ref == nil {
 		ref = &Reference{
@@ -1810,6 +1829,22 @@ func (this *HDLS) listCustomerDisputesByResolutionId(v string) (*CustomerDispute
 
 	return &xs, nil
 }
+func (this *HDLS) listCustomerDisputesByOwner(v string) (*CustomerDisputes, error) {
+
+	var xs CustomerDisputes
+	refId := this.refIdCustomerDisputeOwner(v)
+	reference, _ := this.getReference(refId)
+	if reference != nil {
+		for _, id := range reference.Ids {
+			x, _ := this.getCustomerDispute(id)
+			if x != nil {
+				xs.Data = append(xs.Data, *x)
+			}
+		}
+	}
+
+	return &xs, nil
+}
 
 func (this *HDLS) addCustomerDispute(jsonStr string) error {
 
@@ -1913,6 +1948,18 @@ func (this *HDLS) deleteCustomerDispute(x *CustomerDispute) error {
 		}
 	}
 	refId = this.refIdCustomerDisputeResolutionId(curr.ResolutionId)
+	ref, _ = this.getReference(refId)
+	if ref != nil {
+		ref.Ids = remove(ref.Ids, x.Id)
+		this.deleteReference(ref)
+		
+		if len(ref.Ids) > 0 {
+			this.overwriteReference(ref)
+		} else {
+			this.deleteReference(ref)
+		}
+	}
+	refId = this.refIdCustomerDisputeOwner(curr.Owner)
 	ref, _ = this.getReference(refId)
 	if ref != nil {
 		ref.Ids = remove(ref.Ids, x.Id)
