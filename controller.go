@@ -272,7 +272,7 @@ func (hdls *HDLS) updatePISPAssignToMerchant(disputeContent CustomerDispute) err
 
 			err = hdls.putMerchant(disputeContent.Merchant)
 		} else {
-			existingMerchant, err := hdls.getMerchant(existingDispute.Merchant.Id)
+			existingMerchant, err3 := hdls.getMerchant(existingDispute.Merchant.Id)
 			existingMerchant.Name = disputeContent.Merchant.Name
 			err = hdls.overwriteMerchant(existingMerchant)
 		}
