@@ -246,7 +246,10 @@ func (hdls *HDLS) updatePISPAssignToMerchant(disputeContent CustomerDispute) err
 	stub := hdls.db
 	uuid := stub.GetTxID()
 	var err error
-	existingDispute, _ := hdls.getCustomerDispute(disputeContent.Id)
+	existingDispute, err2 := hdls.getCustomerDispute(disputeContent.Id)
+	if err2 != nil {
+		return err2
+	}
 
 	if disputeContent.PISP != nil {
 		existingDispute.PISP.Id = "PISP_" + uuid
@@ -272,7 +275,10 @@ func (hdls *HDLS) updatePISPAssignToMerchant(disputeContent CustomerDispute) err
 
 			err = hdls.putMerchant(disputeContent.Merchant)
 		} else {
-			existingMerchant, _ := hdls.getMerchant(existingDispute.Merchant.Id)
+			existingMerchant, err3 := hdls.getMerchant(existingDispute.Merchant.Id)
+			if err3 != nil {
+				return err3
+			}
 			existingMerchant.Name = disputeContent.Merchant.Name
 			err = hdls.overwriteMerchant(existingMerchant)
 		}
