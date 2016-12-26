@@ -263,6 +263,9 @@ func (hdls *HDLS) updatePISPAssignToMerchant(disputeContent CustomerDispute) err
 	var err error
 	existingDispute, err2 := hdls.getCustomerDispute(disputeContent.Id)
 	b, e := json.Marshal(existingDispute)
+	if e != nil {
+		return e
+	}
 	existingDispute.Audit = append(existingDispute.Audit, string(b))
 	if err2 != nil {
 		return err2
@@ -324,6 +327,9 @@ func (hdls *HDLS) updateMerchantInformation(disputeContent CustomerDispute) erro
 	var err error
 	existingDispute, err2 := hdls.getCustomerDispute(disputeContent.Id)
 	b, e := json.Marshal(existingDispute)
+	if e != nil {
+		return e
+	}
 	existingDispute.Audit = append(existingDispute.Audit, string(b))
 	if err2 != nil {
 		return err2
