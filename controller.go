@@ -252,6 +252,7 @@ func (hdls *HDLS) updatePISPAssignToMerchant(disputeContent CustomerDispute) err
 	}
 
 	if disputeContent.PISP != nil {
+		existingDispute.PISP = disputeContent.PISP
 		existingDispute.PISP.Id = "PISP_" + uuid
 		existingDispute.PISPId = "PISP_" + uuid
 		if disputeContent.PISP.TransactionInfo != nil {
@@ -269,7 +270,7 @@ func (hdls *HDLS) updatePISPAssignToMerchant(disputeContent CustomerDispute) err
 	}
 
 	if disputeContent.Merchant != nil {
-		if existingDispute.Merchant.Id == "" {
+		if existingDispute.Merchant == nil {
 			existingDispute.Merchant.Id = "Merchant_" + uuid
 			existingDispute.MerchantId = "Merchant_" + uuid
 
