@@ -274,7 +274,7 @@ func (hdls *HDLS) updatePISPAssignToMerchant(disputeContent CustomerDispute) err
 
 	if disputeContent.Merchant != nil {
 		if existingDispute.Merchant == nil {
-			existingDispute.Merchant.Id = "Merchant_" + uuid
+			disputeContent.Merchant.Id = "Merchant_" + uuid
 			existingDispute.MerchantId = "Merchant_" + uuid
 
 			err = hdls.putMerchant(disputeContent.Merchant)
