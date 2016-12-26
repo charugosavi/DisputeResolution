@@ -35,6 +35,21 @@ func (hdls *HDLS) updateCustomerDisputeFunction(args []string) error {
 	return hdls.updateDispute(disputeContent)
 }
 
+func (hdls *HDLS) updatePISPAssignToMerchantFunction(args []string) error {
+	hdls.logger.Debugf("updatePISPAssignToMerchantFunction")
+	if len(args) != 1 {
+		return errors.New("updatePISPAssignToMerchantFunction: number of argument is invalid")
+	}
+	disputeContentJSON := args[0]
+	disputeContent := CustomerDispute{}
+	err := json.Unmarshal([]byte(disputeContentJSON), &disputeContent)
+	if err != nil {
+		return err
+	}
+	hdls.logger.Debugf("disputeContent: ", disputeContent)
+	return hdls.updatePISPAssignToMerchant(disputeContent)
+}
+
 func (hdls *HDLS) createDispute(disputeContent CustomerDispute) error {
 	stub := hdls.db
 	uuid := stub.GetTxID()
@@ -54,6 +69,14 @@ func (hdls *HDLS) createDispute(disputeContent CustomerDispute) error {
 	if disputeContent.Customer != nil {
 		disputeContent.Customer.Id = "Customer_" + uuid
 		disputeContent.CustomerId = "Customer_" + uuid
+		if disputeContent.Customer.TransactionInfo != nil {
+			disputeContent.Customer.TransactionInfoId = "Customer_TxnInfo_" + uuid
+			disputeContent.Customer.TransactionInfo.Id = "Customer_TxnInfo_" + uuid
+			err = hdls.putTransactionInfo(disputeContent.Customer.TransactionInfo)
+			if err != nil {
+				return err
+			}
+		}
 		err = hdls.putCustomer(disputeContent.Customer)
 		if err != nil {
 			return err
@@ -63,6 +86,14 @@ func (hdls *HDLS) createDispute(disputeContent CustomerDispute) error {
 	if disputeContent.Bank != nil {
 		disputeContent.Bank.Id = "Bank_" + uuid
 		disputeContent.BankId = "Bank_" + uuid
+		if disputeContent.Bank.TransactionInfo != nil {
+			disputeContent.Bank.TransactionInfoId = "Bank_TxnInfo_" + uuid
+			disputeContent.Bank.TransactionInfo.Id = "Bank_TxnInfo_" + uuid
+			err = hdls.putTransactionInfo(disputeContent.Bank.TransactionInfo)
+			if err != nil {
+				return err
+			}
+		}
 		err = hdls.putBank(disputeContent.Bank)
 		if err != nil {
 			return err
@@ -72,6 +103,14 @@ func (hdls *HDLS) createDispute(disputeContent CustomerDispute) error {
 	if disputeContent.PISP != nil {
 		disputeContent.PISP.Id = "PISP_" + uuid
 		disputeContent.PISPId = "PISP_" + uuid
+		if disputeContent.PISP.TransactionInfo != nil {
+			disputeContent.PISP.TransactionInfoId = "PISP_TxnInfo_" + uuid
+			disputeContent.PISP.TransactionInfo.Id = "PISP_TxnInfo_" + uuid
+			err = hdls.putTransactionInfo(disputeContent.PISP.TransactionInfo)
+			if err != nil {
+				return err
+			}
+		}
 		err = hdls.putPISP(disputeContent.PISP)
 		if err != nil {
 			return err
@@ -81,6 +120,14 @@ func (hdls *HDLS) createDispute(disputeContent CustomerDispute) error {
 	if disputeContent.Merchant != nil {
 		disputeContent.Merchant.Id = "Merchant_" + uuid
 		disputeContent.MerchantId = "Merchant_" + uuid
+		if disputeContent.Merchant.TransactionInfo != nil {
+			disputeContent.Merchant.TransactionInfoId = "Merchant_TxnInfo_" + uuid
+			disputeContent.Merchant.TransactionInfo.Id = "Merchant_TxnInfo_" + uuid
+			err = hdls.putTransactionInfo(disputeContent.Merchant.TransactionInfo)
+			if err != nil {
+				return err
+			}
+		}
 		err = hdls.putMerchant(disputeContent.Merchant)
 		if err != nil {
 			return err
@@ -187,6 +234,55 @@ func (hdls *HDLS) updateDispute(disputeContent CustomerDispute) error {
 			return err
 		}
 	}
+
+	err = hdls.overwriteCustomerDispute(&disputeContent)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (hdls *HDLS) updatePISPAssignToMerchant(disputeContent CustomerDispute) error {
+	stub := hdls.db
+	uuid := stub.GetTxID()
+	var err error
+	existingDispute, err := hdls.getCustomerDispute(disputeContent.Id)
+
+	if disputeContent.PISP != nil {
+		existingDispute.PISP.Id = "PISP_" + uuid
+		existingDispute.PISPId = "PISP_" + uuid
+		if disputeContent.PISP.TransactionInfo != nil {
+			disputeContent.PISP.TransactionInfoId = "PISP_TxnInfo_" + uuid
+			disputeContent.PISP.TransactionInfo.Id = "PISP_TxnInfo_" + uuid
+			err = hdls.putTransactionInfo(disputeContent.PISP.TransactionInfo)
+			if err != nil {
+				return err
+			}
+		}
+		err = hdls.putPISP(disputeContent.PISP)
+		if err != nil {
+			return err
+		}
+	}
+
+	if disputeContent.Merchant != nil {
+		if existingDispute.Merchant.Id == "" {
+			existingDispute.Merchant.Id = "Merchant_" + uuid
+			existingDispute.MerchantId = "Merchant_" + uuid
+
+			err = hdls.putMerchant(disputeContent.Merchant)
+		} else {
+			existingMerchant, err := hdls.getMerchant(existingDispute.Merchant.Id)
+			existingMerchant.Name = disputeContent.Merchant.Name
+			err = hdls.overwriteMerchant(existingMerchant)
+		}
+		if err != nil {
+			return err
+		}
+	}
+
+	existingDispute.Owner = disputeContent.Owner
+	existingDispute.Status = disputeContent.Status
 
 	err = hdls.overwriteCustomerDispute(&disputeContent)
 	if err != nil {
