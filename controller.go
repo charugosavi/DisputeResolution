@@ -262,6 +262,8 @@ func (hdls *HDLS) updatePISPAssignToMerchant(disputeContent CustomerDispute) err
 	uuid := stub.GetTxID()
 	var err error
 	existingDispute, err2 := hdls.getCustomerDispute(disputeContent.Id)
+	b, e := json.Marshal(existingDispute)
+	existingDispute.Audit = append(existingDispute.Audit, string(b))
 	if err2 != nil {
 		return err2
 	}
@@ -321,6 +323,8 @@ func (hdls *HDLS) updateMerchantInformation(disputeContent CustomerDispute) erro
 	uuid := stub.GetTxID()
 	var err error
 	existingDispute, err2 := hdls.getCustomerDispute(disputeContent.Id)
+	b, e := json.Marshal(existingDispute)
+	existingDispute.Audit = append(existingDispute.Audit, string(b))
 	if err2 != nil {
 		return err2
 	}
