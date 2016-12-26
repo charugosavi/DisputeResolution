@@ -246,7 +246,7 @@ func (hdls *HDLS) updatePISPAssignToMerchant(disputeContent CustomerDispute) err
 	stub := hdls.db
 	uuid := stub.GetTxID()
 	var err error
-	existingDispute, err := hdls.getCustomerDispute(disputeContent.Id)
+	existingDispute, err2 := hdls.getCustomerDispute(disputeContent.Id)
 
 	if disputeContent.PISP != nil {
 		existingDispute.PISP.Id = "PISP_" + uuid
