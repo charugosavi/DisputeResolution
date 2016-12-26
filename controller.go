@@ -251,6 +251,10 @@ func (hdls *HDLS) updatePISPAssignToMerchant(disputeContent CustomerDispute) err
 		return err2
 	}
 
+	if existingDispute == nil {
+		return errors.New("updatePISPAssignToMerchant: Existing dispute with id " + disputeContent.Id + " not found.")
+	}
+
 	if disputeContent.PISP != nil {
 		disputeContent.PISP.Id = "PISP_" + uuid
 		existingDispute.PISPId = "PISP_" + uuid
