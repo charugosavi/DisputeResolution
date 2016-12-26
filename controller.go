@@ -143,7 +143,7 @@ func (hdls *HDLS) createDispute(disputeContent CustomerDispute) error {
 		}
 	}
 
-	err = hdls.overwriteCustomerDispute(&disputeContent)
+	err = hdls.putCustomerDispute(&disputeContent)
 	if err != nil {
 		return err
 	}
