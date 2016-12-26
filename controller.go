@@ -294,7 +294,7 @@ func (hdls *HDLS) updatePISPAssignToMerchant(disputeContent CustomerDispute) err
 	existingDispute.Owner = disputeContent.Owner
 	existingDispute.Status = disputeContent.Status
 
-	err = hdls.overwriteCustomerDispute(&disputeContent)
+	err = hdls.overwriteCustomerDispute(existingDispute)
 	if err != nil {
 		return err
 	}
