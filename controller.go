@@ -47,7 +47,8 @@ func (hdls *HDLS) updatePISPAssignToMerchantFunction(args []string) error {
 		return err
 	}
 	hdls.logger.Debugf("disputeContent: ", disputeContent)
-	return hdls.updatePISPAssignToMerchant(disputeContent)
+	//return hdls.updatePISPAssignToMerchant(disputeContent)
+	return nil
 }
 
 func (hdls *HDLS) createDispute(disputeContent CustomerDispute) error {
