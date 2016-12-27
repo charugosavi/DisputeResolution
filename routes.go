@@ -32,6 +32,12 @@ func (hdls *HDLS) RunImpl(function string, args []string) ([]byte, error) {
 		return nil, hdls.updatePISPAssignToMerchantFunction(args)
 	case "updateMerchantInformation":
 		return nil, hdls.updateMerchantInformationFunction(args)
+	case "sendToBankFromPISP":
+		return nil, hdls.sendToBankFromPISPFunction(args)
+	case "updateBankInformation":
+		return nil, hdls.updateBankInformationFunction(args)
+	case "resolveDispute":
+		return nil, hdls.resolveDisputeFunction(args)
 	default:
 		return nil, errors.New("UNKNOWN_INVOCATION|Received unknown function invocation")
 	}

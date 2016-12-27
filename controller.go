@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"time"
 )
 
 func (hdls *HDLS) addCustomerDisputeFunction(args []string) error {
@@ -63,6 +64,51 @@ func (hdls *HDLS) updatePISPAssignToMerchantFunction(args []string) error {
 	}
 	hdls.logger.Debugf("disputeContent: ", disputeContent)
 	return hdls.updatePISPAssignToMerchant(disputeContent)
+}
+
+func (hdls *HDLS) sendToBankFromPISPFunction(args []string) error {
+	hdls.logger.Debugf("sendToBankFromPISPFunction")
+	if len(args) != 1 {
+		return errors.New("usendToBankFromPISPFunction: number of argument is invalid")
+	}
+	disputeContentJSON := args[0]
+	disputeContent := CustomerDispute{}
+	err := json.Unmarshal([]byte(disputeContentJSON), &disputeContent)
+	if err != nil {
+		return err
+	}
+	hdls.logger.Debugf("disputeContent: ", disputeContent)
+	return hdls.sendToBankFromPISP(disputeContent)
+}
+
+func (hdls *HDLS) updateBankInformationFunction(args []string) error {
+	hdls.logger.Debugf("updateBankInformationFunction")
+	if len(args) != 1 {
+		return errors.New("updateBankInformationFunction: number of argument is invalid")
+	}
+	disputeContentJSON := args[0]
+	disputeContent := CustomerDispute{}
+	err := json.Unmarshal([]byte(disputeContentJSON), &disputeContent)
+	if err != nil {
+		return err
+	}
+	hdls.logger.Debugf("disputeContent: ", disputeContent)
+	return hdls.updateBankInformation(disputeContent)
+}
+
+func (hdls *HDLS) resolveDisputeFunction(args []string) error {
+	hdls.logger.Debugf("resolveDisputeFunction")
+	if len(args) != 1 {
+		return errors.New("resolveDisputeFunction: number of argument is invalid")
+	}
+	disputeContentJSON := args[0]
+	disputeContent := CustomerDispute{}
+	err := json.Unmarshal([]byte(disputeContentJSON), &disputeContent)
+	if err != nil {
+		return err
+	}
+	hdls.logger.Debugf("disputeContent: ", disputeContent)
+	return hdls.resolveDispute(disputeContent)
 }
 
 func (hdls *HDLS) createDispute(disputeContent CustomerDispute) error {
@@ -262,13 +308,7 @@ func (hdls *HDLS) updatePISPAssignToMerchant(disputeContent CustomerDispute) err
 	uuid := stub.GetTxID()
 	var err error
 	existingDispute, err2 := hdls.getCustomerDispute(disputeContent.Id)
-	cp := existingDispute
-	cp.Audit = nil
-	b, e := json.Marshal(cp)
-	if e != nil {
-		return e
-	}
-	existingDispute.Audit = append(existingDispute.Audit, string(b))
+
 	if err2 != nil {
 		return err2
 	}
@@ -276,6 +316,13 @@ func (hdls *HDLS) updatePISPAssignToMerchant(disputeContent CustomerDispute) err
 	if existingDispute == nil {
 		return errors.New("updatePISPAssignToMerchant: Existing dispute with id " + disputeContent.Id + " not found.")
 	}
+	cp := existingDispute
+	cp.Audit = nil
+	b, e := json.Marshal(cp)
+	if e != nil {
+		return e
+	}
+	existingDispute.Audit = append(existingDispute.Audit, string(b))
 
 	if disputeContent.PISP != nil {
 		disputeContent.PISP.Id = "PISP_" + uuid
@@ -315,6 +362,7 @@ func (hdls *HDLS) updatePISPAssignToMerchant(disputeContent CustomerDispute) err
 
 	existingDispute.Owner = disputeContent.Owner
 	existingDispute.Status = disputeContent.Status
+	existingDispute.LastUpdated = time.Now().Format(time.RFC850)
 
 	err = hdls.overwriteCustomerDispute(existingDispute)
 	if err != nil {
@@ -328,13 +376,7 @@ func (hdls *HDLS) updateMerchantInformation(disputeContent CustomerDispute) erro
 	uuid := stub.GetTxID()
 	var err error
 	existingDispute, err2 := hdls.getCustomerDispute(disputeContent.Id)
-	cp := existingDispute
-	cp.Audit = nil
-	b, e := json.Marshal(cp)
-	if e != nil {
-		return e
-	}
-	existingDispute.Audit = append(existingDispute.Audit, string(b))
+
 	if err2 != nil {
 		return err2
 	}
@@ -342,10 +384,17 @@ func (hdls *HDLS) updateMerchantInformation(disputeContent CustomerDispute) erro
 	if existingDispute == nil {
 		return errors.New("updateMerchantInformation: Existing dispute with id " + disputeContent.Id + " not found.")
 	}
+	cp := existingDispute
+	cp.Audit = nil
+	b, e := json.Marshal(cp)
+	if e != nil {
+		return e
+	}
+	existingDispute.Audit = append(existingDispute.Audit, string(b))
 
 	if disputeContent.Merchant != nil {
 		if disputeContent.Merchant.TransactionInfo != nil {
-			disputeContent.Merchant.TransactionInfo.Id = "PISP_TxnInfo_" + uuid
+			disputeContent.Merchant.TransactionInfo.Id = "Merchant_TxnInfo_" + uuid
 			err = hdls.putTransactionInfo(disputeContent.Merchant.TransactionInfo)
 			if err != nil {
 				return err
@@ -354,7 +403,7 @@ func (hdls *HDLS) updateMerchantInformation(disputeContent CustomerDispute) erro
 		if existingDispute.Merchant == nil {
 			disputeContent.Merchant.Id = "Merchant_" + uuid
 			existingDispute.MerchantId = "Merchant_" + uuid
-			disputeContent.Merchant.TransactionInfoId = "PISP_TxnInfo_" + uuid
+			disputeContent.Merchant.TransactionInfoId = "Merchant_TxnInfo_" + uuid
 			err = hdls.putMerchant(disputeContent.Merchant)
 		} else {
 			existingMerchant, err3 := hdls.getMerchant(existingDispute.Merchant.Id)
@@ -366,7 +415,7 @@ func (hdls *HDLS) updateMerchantInformation(disputeContent CustomerDispute) erro
 			existingMerchant.Terminal = disputeContent.Merchant.Terminal
 			existingMerchant.Cashier = disputeContent.Merchant.Cashier
 			existingMerchant.Receipts = disputeContent.Merchant.Receipts
-			existingMerchant.TransactionInfoId = "PISP_TxnInfo_" + uuid
+			existingMerchant.TransactionInfoId = "Merchant_TxnInfo_" + uuid
 			err = hdls.overwriteMerchant(existingMerchant)
 		}
 		if err != nil {
@@ -376,6 +425,183 @@ func (hdls *HDLS) updateMerchantInformation(disputeContent CustomerDispute) erro
 
 	existingDispute.Owner = disputeContent.Owner
 	existingDispute.Status = disputeContent.Status
+	existingDispute.LastUpdated = time.Now().Format(time.RFC850)
+
+	err = hdls.overwriteCustomerDispute(existingDispute)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (hdls *HDLS) sendToBankFromPISP(disputeContent CustomerDispute) error {
+	stub := hdls.db
+	uuid := stub.GetTxID()
+	var err error
+	existingDispute, err2 := hdls.getCustomerDispute(disputeContent.Id)
+
+	if err2 != nil {
+		return err2
+	}
+
+	if existingDispute == nil {
+		return errors.New("sendToBankFromPISP: Existing dispute with id " + disputeContent.Id + " not found.")
+	}
+	cp := existingDispute
+	cp.Audit = nil
+	b, e := json.Marshal(cp)
+	if e != nil {
+		return e
+	}
+	existingDispute.Audit = append(existingDispute.Audit, string(b))
+
+	if disputeContent.Bank != nil {
+		if existingDispute.Bank == nil {
+			disputeContent.Bank.Id = "Bank_" + uuid
+			existingDispute.BankId = "Bank_" + uuid
+			err = hdls.putBank(disputeContent.Bank)
+		} else {
+			existingBank, err3 := hdls.getBank(existingDispute.Bank.Id)
+			if err3 != nil {
+				return err3
+			}
+			existingBank.Name = disputeContent.Bank.Name
+			err = hdls.overwriteBank(existingBank)
+		}
+		if err != nil {
+			return err
+		}
+	}
+
+	existingDispute.Owner = disputeContent.Owner
+	existingDispute.Status = disputeContent.Status
+	existingDispute.LastUpdated = time.Now().Format(time.RFC850)
+
+	err = hdls.overwriteCustomerDispute(existingDispute)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (hdls *HDLS) updateBankInformation(disputeContent CustomerDispute) error {
+	stub := hdls.db
+	uuid := stub.GetTxID()
+	var err error
+	existingDispute, err2 := hdls.getCustomerDispute(disputeContent.Id)
+
+	if err2 != nil {
+		return err2
+	}
+
+	if existingDispute == nil {
+		return errors.New("updateBankInformation: Existing dispute with id " + disputeContent.Id + " not found.")
+	}
+	cp := existingDispute
+	cp.Audit = nil
+	b, e := json.Marshal(cp)
+	if e != nil {
+		return e
+	}
+	existingDispute.Audit = append(existingDispute.Audit, string(b))
+
+	if disputeContent.Bank != nil {
+		if disputeContent.Bank.TransactionInfo != nil {
+			disputeContent.Bank.TransactionInfo.Id = "Bank_TxnInfo_" + uuid
+			err = hdls.putTransactionInfo(disputeContent.Bank.TransactionInfo)
+			if err != nil {
+				return err
+			}
+		}
+		if existingDispute.Bank == nil {
+			disputeContent.Bank.Id = "Bank_" + uuid
+			existingDispute.BankId = "Bank_" + uuid
+			disputeContent.Bank.TransactionInfoId = "Bank_TxnInfo_" + uuid
+			err = hdls.putBank(disputeContent.Bank)
+		} else {
+			existingBank, err3 := hdls.getBank(existingDispute.Bank.Id)
+			if err3 != nil {
+				return err3
+			}
+			existingBank.Name = disputeContent.Bank.Name
+			existingBank.Branch = disputeContent.Bank.Branch
+			existingBank.Terminal = disputeContent.Bank.Terminal
+			existingBank.Cashier = disputeContent.Bank.Cashier
+			existingBank.Receipts = disputeContent.Bank.Receipts
+			existingBank.TransactionInfoId = "Bank_TxnInfo_" + uuid
+			err = hdls.overwriteBank(existingBank)
+		}
+		if err != nil {
+			return err
+		}
+	}
+
+	existingDispute.Owner = disputeContent.Owner
+	existingDispute.Status = disputeContent.Status
+	existingDispute.LastUpdated = time.Now().Format(time.RFC850)
+
+	err = hdls.overwriteCustomerDispute(existingDispute)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (hdls *HDLS) resolveDispute(disputeContent CustomerDispute) error {
+	stub := hdls.db
+	uuid := stub.GetTxID()
+	var err error
+	existingDispute, err2 := hdls.getCustomerDispute(disputeContent.Id)
+
+	if err2 != nil {
+		return err2
+	}
+
+	if existingDispute == nil {
+		return errors.New("updateBankInformation: Existing dispute with id " + disputeContent.Id + " not found.")
+	}
+	cp := existingDispute
+	cp.Audit = nil
+	b, e := json.Marshal(cp)
+	if e != nil {
+		return e
+	}
+	existingDispute.Audit = append(existingDispute.Audit, string(b))
+
+	if disputeContent.Bank != nil {
+		if disputeContent.Bank.TransactionInfo != nil {
+			disputeContent.Bank.TransactionInfo.Id = "Bank_TxnInfo_" + uuid
+			err = hdls.putTransactionInfo(disputeContent.Bank.TransactionInfo)
+			if err != nil {
+				return err
+			}
+		}
+		if existingDispute.Bank == nil {
+			disputeContent.Bank.Id = "Bank_" + uuid
+			existingDispute.BankId = "Bank_" + uuid
+			disputeContent.Bank.TransactionInfoId = "Bank_TxnInfo_" + uuid
+			err = hdls.putBank(disputeContent.Bank)
+		} else {
+			existingBank, err3 := hdls.getBank(existingDispute.Bank.Id)
+			if err3 != nil {
+				return err3
+			}
+			existingBank.Name = disputeContent.Bank.Name
+			existingBank.Branch = disputeContent.Bank.Branch
+			existingBank.Terminal = disputeContent.Bank.Terminal
+			existingBank.Cashier = disputeContent.Bank.Cashier
+			existingBank.Receipts = disputeContent.Bank.Receipts
+			existingBank.TransactionInfoId = "Bank_TxnInfo_" + uuid
+			err = hdls.overwriteBank(existingBank)
+		}
+		if err != nil {
+			return err
+		}
+	}
+
+	existingDispute.Owner = disputeContent.Owner
+	existingDispute.Status = disputeContent.Status
+	existingDispute.LastUpdated = time.Now().Format(time.RFC850)
 
 	err = hdls.overwriteCustomerDispute(existingDispute)
 	if err != nil {
