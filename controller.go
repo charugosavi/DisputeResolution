@@ -267,7 +267,7 @@ func (hdls *HDLS) updatePISPInformation(disputeContent CustomerDispute) error {
 		}
 	}
 
-	existingDispute.Owner = disputeContent.Owner
+	existingDispute.Owner = []string{"merchant", "bank"}
 	existingDispute.Status = disputeContent.Status
 	existingDispute.LastUpdated = time.Now().Format(time.RFC850)
 
