@@ -22,7 +22,7 @@ func (hdls *HDLS) RunImpl(function string, args []string) ([]byte, error) {
 
 	hdls.logger.Debugf("RunImpl")
 	if len(args) != 1 {
-		return errors.New("RunImpl: number of argument is invalid")
+		return nil, errors.New("RunImpl: number of argument is invalid")
 	}
 	disputeContentJSON := args[0]
 	disputeContent := CustomerDispute{}
@@ -31,13 +31,12 @@ func (hdls *HDLS) RunImpl(function string, args []string) ([]byte, error) {
 		return nil, err
 	}
 	hdls.logger.Debugf("disputeContent: ", disputeContent)
-	return hdls.createDispute(disputeContent)
 
 	// Handle different functions
 	switch function {
 	//Dispute management functions
 	case "addCustomerDispute":
-		return nil, hdls.addCustomerDispute(disputeContent)
+		return nil, hdls.addNewCustomerDispute(disputeContent)
 
 	case "updateCustomerDispute":
 		return nil, hdls.updateCustomerDispute(disputeContent)

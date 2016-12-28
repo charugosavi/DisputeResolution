@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func (hdls *HDLS) addCustomerDispute(disputeContent CustomerDispute) error {
+func (hdls *HDLS) addNewCustomerDispute(disputeContent CustomerDispute) error {
 	stub := hdls.db
 	uuid := stub.GetTxID()
 	var err error
@@ -463,31 +463,13 @@ func (hdls *HDLS) resolveDispute(disputeContent CustomerDispute) error {
 	}
 	existingDispute.Audit = append(existingDispute.Audit, string(b))
 
-	if disputeContent.Bank != nil {
-		if disputeContent.Bank.TransactionInfo != nil {
-			disputeContent.Bank.TransactionInfo.Id = "Bank_TxnInfo_" + uuid
-			err = hdls.putTransactionInfo(disputeContent.Bank.TransactionInfo)
-			if err != nil {
-				return err
-			}
-		}
-		if existingDispute.Bank == nil {
-			disputeContent.Bank.Id = "Bank_" + uuid
-			existingDispute.BankId = "Bank_" + uuid
-			disputeContent.Bank.TransactionInfoId = "Bank_TxnInfo_" + uuid
-			err = hdls.putBank(disputeContent.Bank)
+	if disputeContent.Resolution != nil {
+		if disputeContent.Resolution.Id == "" {
+			disputeContent.Resolution.Id = "Resolution_" + uuid
+			existingDispute.ResolutionId = "Resolution_" + uuid
+			err = hdls.putResolution(disputeContent.Resolution)
 		} else {
-			existingBank, err3 := hdls.getBank(existingDispute.Bank.Id)
-			if err3 != nil {
-				return err3
-			}
-			existingBank.Name = disputeContent.Bank.Name
-			existingBank.Branch = disputeContent.Bank.Branch
-			existingBank.Terminal = disputeContent.Bank.Terminal
-			existingBank.Cashier = disputeContent.Bank.Cashier
-			existingBank.Receipts = disputeContent.Bank.Receipts
-			existingBank.TransactionInfoId = "Bank_TxnInfo_" + uuid
-			err = hdls.overwriteBank(existingBank)
+			err = hdls.overwriteResolution(disputeContent.Resolution)
 		}
 		if err != nil {
 			return err
