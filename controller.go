@@ -425,7 +425,7 @@ func (hdls *HDLS) updateBankInformation(disputeContent CustomerDispute) error {
 	var i int
 	for index, element := range existingDispute.Owner {
 		// element is the element from someSlice for where we are
-		if element == "merchant" {
+		if element == "bank" {
 			found = true
 			i = index
 		}
