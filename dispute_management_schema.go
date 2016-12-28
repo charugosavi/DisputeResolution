@@ -118,7 +118,7 @@ type CustomerDispute struct {
 	LastUpdated                 string                     `json:"updated"`
 	Resolution                  *Resolution                `json:"resolution"`
 	ResolutionId                string                     //@index
-	Owner                       string                     `json:"owner"` //@index
+	Owner                       []string                   `json:"owner"`
 	Audit                       []string                   `json:"audit"`
 }
 

@@ -6,112 +6,7 @@ import (
 	"time"
 )
 
-func (hdls *HDLS) addCustomerDisputeFunction(args []string) error {
-	hdls.logger.Debugf("addCustomerDisputeFunction")
-	if len(args) != 1 {
-		return errors.New("addCustomerDisputeFunction: number of argument is invalid")
-	}
-	disputeContentJSON := args[0]
-	disputeContent := CustomerDispute{}
-	err := json.Unmarshal([]byte(disputeContentJSON), &disputeContent)
-	if err != nil {
-		return err
-	}
-	hdls.logger.Debugf("disputeContent: ", disputeContent)
-	return hdls.createDispute(disputeContent)
-}
-
-func (hdls *HDLS) updateCustomerDisputeFunction(args []string) error {
-	hdls.logger.Debugf("updateCustomerDisputeFunction")
-	if len(args) != 1 {
-		return errors.New("updateCustomerDisputeFunction: number of argument is invalid")
-	}
-	disputeContentJSON := args[0]
-	disputeContent := CustomerDispute{}
-	err := json.Unmarshal([]byte(disputeContentJSON), &disputeContent)
-	if err != nil {
-		return err
-	}
-	hdls.logger.Debugf("disputeContent: ", disputeContent)
-	return hdls.updateDispute(disputeContent)
-}
-
-func (hdls *HDLS) updateMerchantInformationFunction(args []string) error {
-	hdls.logger.Debugf("updateMerchantInformation")
-	if len(args) != 1 {
-		return errors.New("updateMerchantInformation: number of argument is invalid")
-	}
-	disputeContentJSON := args[0]
-	disputeContent := CustomerDispute{}
-	err := json.Unmarshal([]byte(disputeContentJSON), &disputeContent)
-	if err != nil {
-		return err
-	}
-	hdls.logger.Debugf("disputeContent: ", disputeContent)
-	return hdls.updateMerchantInformation(disputeContent)
-}
-
-func (hdls *HDLS) updatePISPAssignToMerchantFunction(args []string) error {
-	hdls.logger.Debugf("updatePISPAssignToMerchantFunction")
-	if len(args) != 1 {
-		return errors.New("updatePISPAssignToMerchantFunction: number of argument is invalid")
-	}
-	disputeContentJSON := args[0]
-	disputeContent := CustomerDispute{}
-	err := json.Unmarshal([]byte(disputeContentJSON), &disputeContent)
-	if err != nil {
-		return err
-	}
-	hdls.logger.Debugf("disputeContent: ", disputeContent)
-	return hdls.updatePISPAssignToMerchant(disputeContent)
-}
-
-func (hdls *HDLS) sendToBankFromPISPFunction(args []string) error {
-	hdls.logger.Debugf("sendToBankFromPISPFunction")
-	if len(args) != 1 {
-		return errors.New("usendToBankFromPISPFunction: number of argument is invalid")
-	}
-	disputeContentJSON := args[0]
-	disputeContent := CustomerDispute{}
-	err := json.Unmarshal([]byte(disputeContentJSON), &disputeContent)
-	if err != nil {
-		return err
-	}
-	hdls.logger.Debugf("disputeContent: ", disputeContent)
-	return hdls.sendToBankFromPISP(disputeContent)
-}
-
-func (hdls *HDLS) updateBankInformationFunction(args []string) error {
-	hdls.logger.Debugf("updateBankInformationFunction")
-	if len(args) != 1 {
-		return errors.New("updateBankInformationFunction: number of argument is invalid")
-	}
-	disputeContentJSON := args[0]
-	disputeContent := CustomerDispute{}
-	err := json.Unmarshal([]byte(disputeContentJSON), &disputeContent)
-	if err != nil {
-		return err
-	}
-	hdls.logger.Debugf("disputeContent: ", disputeContent)
-	return hdls.updateBankInformation(disputeContent)
-}
-
-func (hdls *HDLS) resolveDisputeFunction(args []string) error {
-	hdls.logger.Debugf("resolveDisputeFunction")
-	if len(args) != 1 {
-		return errors.New("resolveDisputeFunction: number of argument is invalid")
-	}
-	disputeContentJSON := args[0]
-	disputeContent := CustomerDispute{}
-	err := json.Unmarshal([]byte(disputeContentJSON), &disputeContent)
-	if err != nil {
-		return err
-	}
-	hdls.logger.Debugf("disputeContent: ", disputeContent)
-	return hdls.resolveDispute(disputeContent)
-}
-
-func (hdls *HDLS) createDispute(disputeContent CustomerDispute) error {
+func (hdls *HDLS) addCustomerDispute(disputeContent CustomerDispute) error {
 	stub := hdls.db
 	uuid := stub.GetTxID()
 	var err error
@@ -211,7 +106,7 @@ func (hdls *HDLS) createDispute(disputeContent CustomerDispute) error {
 	return nil
 }
 
-func (hdls *HDLS) updateDispute(disputeContent CustomerDispute) error {
+func (hdls *HDLS) updateCustomerDispute(disputeContent CustomerDispute) error {
 	stub := hdls.db
 	uuid := stub.GetTxID()
 	var err error

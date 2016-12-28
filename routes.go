@@ -12,32 +12,45 @@ disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 
 package main
 
-import "errors"
+import (
+	"encoding/json"
+	"errors"
+)
 
 //RunImpl Runs implementation of Invoke function based on function name
 func (hdls *HDLS) RunImpl(function string, args []string) ([]byte, error) {
 
+	hdls.logger.Debugf("RunImpl")
+	if len(args) != 1 {
+		return errors.New("RunImpl: number of argument is invalid")
+	}
+	disputeContentJSON := args[0]
+	disputeContent := CustomerDispute{}
+	err := json.Unmarshal([]byte(disputeContentJSON), &disputeContent)
+	if err != nil {
+		return nil, err
+	}
+	hdls.logger.Debugf("disputeContent: ", disputeContent)
+	return hdls.createDispute(disputeContent)
+
 	// Handle different functions
 	switch function {
-	case "import":
-		return nil, hdls.imprtJson(args[0])
-
 	//Dispute management functions
 	case "addCustomerDispute":
-		return nil, hdls.addCustomerDisputeFunction(args)
+		return nil, hdls.addCustomerDispute(disputeContent)
 
 	case "updateCustomerDispute":
-		return nil, hdls.updateCustomerDisputeFunction(args)
+		return nil, hdls.updateCustomerDispute(disputeContent)
 	case "updatePISPAssignToMerchant":
-		return nil, hdls.updatePISPAssignToMerchantFunction(args)
+		return nil, hdls.updatePISPAssignToMerchant(disputeContent)
 	case "updateMerchantInformation":
-		return nil, hdls.updateMerchantInformationFunction(args)
+		return nil, hdls.updateMerchantInformation(disputeContent)
 	case "sendToBankFromPISP":
-		return nil, hdls.sendToBankFromPISPFunction(args)
+		return nil, hdls.sendToBankFromPISP(disputeContent)
 	case "updateBankInformation":
-		return nil, hdls.updateBankInformationFunction(args)
+		return nil, hdls.updateBankInformation(disputeContent)
 	case "resolveDispute":
-		return nil, hdls.resolveDisputeFunction(args)
+		return nil, hdls.resolveDispute(disputeContent)
 	default:
 		return nil, errors.New("UNKNOWN_INVOCATION|Received unknown function invocation")
 	}
