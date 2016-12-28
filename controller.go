@@ -198,7 +198,7 @@ func (hdls *HDLS) updateCustomerDispute(disputeContent CustomerDispute) error {
 	return nil
 }
 
-func (hdls *HDLS) updatePISPAssignToMerchant(disputeContent CustomerDispute) error {
+func (hdls *HDLS) updatePISPInformation(disputeContent CustomerDispute) error {
 	stub := hdls.db
 	uuid := stub.GetTxID()
 	var err error
@@ -211,6 +211,18 @@ func (hdls *HDLS) updatePISPAssignToMerchant(disputeContent CustomerDispute) err
 	if existingDispute == nil {
 		return errors.New("updatePISPAssignToMerchant: Existing dispute with id " + disputeContent.Id + " not found.")
 	}
+
+	found := false
+	for _, element := range existingDispute.Owner {
+		// element is the element from someSlice for where we are
+		if element == "pisp" {
+			found = true
+		}
+	}
+	if found == false {
+		return errors.New("You do not have ownership of this dispute")
+	}
+
 	cp := existingDispute
 	cp.Audit = nil
 	b, e := json.Marshal(cp)
@@ -279,6 +291,18 @@ func (hdls *HDLS) updateMerchantInformation(disputeContent CustomerDispute) erro
 	if existingDispute == nil {
 		return errors.New("updateMerchantInformation: Existing dispute with id " + disputeContent.Id + " not found.")
 	}
+	found := false
+	var i int
+	for index, element := range existingDispute.Owner {
+		// element is the element from someSlice for where we are
+		if element == "merchant" {
+			found = true
+			i = index
+		}
+	}
+	if found == false {
+		return errors.New("You do not have ownership of this dispute")
+	}
 	cp := existingDispute
 	cp.Audit = nil
 	b, e := json.Marshal(cp)
@@ -318,8 +342,13 @@ func (hdls *HDLS) updateMerchantInformation(disputeContent CustomerDispute) erro
 		}
 	}
 
-	existingDispute.Owner = disputeContent.Owner
-	existingDispute.Status = disputeContent.Status
+	existingDispute.Owner = removeElem(existingDispute.Owner, i)
+	if len(existingDispute.Owner) == 0 {
+		existingDispute.Status = "Validating"
+		existingDispute.Owner = append(existingDispute.Owner, "pisp")
+	} else {
+		existingDispute.Status = disputeContent.Status
+	}
 	existingDispute.LastUpdated = time.Now().Format(time.RFC850)
 
 	err = hdls.overwriteCustomerDispute(existingDispute)
@@ -392,6 +421,18 @@ func (hdls *HDLS) updateBankInformation(disputeContent CustomerDispute) error {
 	if existingDispute == nil {
 		return errors.New("updateBankInformation: Existing dispute with id " + disputeContent.Id + " not found.")
 	}
+	found := false
+	var i int
+	for index, element := range existingDispute.Owner {
+		// element is the element from someSlice for where we are
+		if element == "merchant" {
+			found = true
+			i = index
+		}
+	}
+	if found == false {
+		return errors.New("You do not have ownership of this dispute")
+	}
 	cp := existingDispute
 	cp.Audit = nil
 	b, e := json.Marshal(cp)
@@ -431,11 +472,17 @@ func (hdls *HDLS) updateBankInformation(disputeContent CustomerDispute) error {
 		}
 	}
 
-	existingDispute.Owner = disputeContent.Owner
-	existingDispute.Status = disputeContent.Status
+	existingDispute.Owner = removeElem(existingDispute.Owner, i)
+	if len(existingDispute.Owner) == 0 {
+		existingDispute.Status = "Validating"
+		existingDispute.Owner = append(existingDispute.Owner, "pisp")
+	} else {
+		existingDispute.Status = disputeContent.Status
+	}
 	existingDispute.LastUpdated = time.Now().Format(time.RFC850)
 
 	err = hdls.overwriteCustomerDispute(existingDispute)
+
 	if err != nil {
 		return err
 	}
@@ -485,4 +532,9 @@ func (hdls *HDLS) resolveDispute(disputeContent CustomerDispute) error {
 		return err
 	}
 	return nil
+}
+
+func removeElem(s []string, i int) []string {
+	s[len(s)-1], s[i] = s[i], s[len(s)-1]
+	return s[:len(s)-1]
 }

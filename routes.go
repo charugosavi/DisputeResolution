@@ -40,8 +40,8 @@ func (hdls *HDLS) RunImpl(function string, args []string) ([]byte, error) {
 
 	case "updateCustomerDispute":
 		return nil, hdls.updateCustomerDispute(disputeContent)
-	case "updatePISPAssignToMerchant":
-		return nil, hdls.updatePISPAssignToMerchant(disputeContent)
+	case "updatePISPInformation":
+		return nil, hdls.updatePISPInformation(disputeContent)
 	case "updateMerchantInformation":
 		return nil, hdls.updateMerchantInformation(disputeContent)
 	case "sendToBankFromPISP":
