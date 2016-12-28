@@ -489,7 +489,7 @@ func (hdls *HDLS) updateBankInformation(disputeContent CustomerDispute) error {
 	return nil
 }
 
-func (hdls *HDLS) resolveDispute(disputeContent CustomerDispute) error {
+func (hdls *HDLS) proposeResolution(disputeContent CustomerDispute) error {
 	stub := hdls.db
 	uuid := stub.GetTxID()
 	var err error
@@ -500,7 +500,19 @@ func (hdls *HDLS) resolveDispute(disputeContent CustomerDispute) error {
 	}
 
 	if existingDispute == nil {
-		return errors.New("updateBankInformation: Existing dispute with id " + disputeContent.Id + " not found.")
+		return errors.New("proposeResolution: Existing dispute with id " + disputeContent.Id + " not found.")
+	}
+	found := false
+	var i int
+	for index, element := range existingDispute.Owner {
+		// element is the element from someSlice for where we are
+		if element == "pisp" {
+			found = true
+			i = index
+		}
+	}
+	if found == false {
+		return errors.New("You do not have ownership of this dispute")
 	}
 	cp := existingDispute
 	cp.Audit = nil
@@ -511,20 +523,26 @@ func (hdls *HDLS) resolveDispute(disputeContent CustomerDispute) error {
 	existingDispute.Audit = append(existingDispute.Audit, string(b))
 
 	if disputeContent.Resolution != nil {
-		if disputeContent.Resolution.Id == "" {
-			disputeContent.Resolution.Id = "Resolution_" + uuid
-			existingDispute.ResolutionId = "Resolution_" + uuid
-			err = hdls.putResolution(disputeContent.Resolution)
-		} else {
-			err = hdls.overwriteResolution(disputeContent.Resolution)
-		}
+		disputeContent.Resolution.Id = "Resolution_" + uuid
+		disputeContent.Resolution.ResolutionTime = time.Now().Format(time.RFC850)
+		existingDispute.ResolutionId = "Resolution_" + uuid
+		disputeContent.Resolution.TransactionInfoId = "Resolution_Txn_" + uuid
+		disputeContent.Resolution.TransactionInfo.Id = "Resolution_Txn_" + uuid
+		err = hdls.putTransactionInfo(disputeContent.Resolution.TransactionInfo)
 		if err != nil {
 			return err
 		}
+		disputeContent.Resolution.TransactionInfo = nil
+		err = hdls.putResolution(disputeContent.Resolution)
+		if err != nil {
+			return err
+		}
+	} else {
+		return errors.New("Resolution is missing")
 	}
 
-	existingDispute.Owner = disputeContent.Owner
-	existingDispute.Status = disputeContent.Status
+	existingDispute.Owner = []string{"bank", "merchant"}
+	existingDispute.Status = "Resolution Proposed"
 	existingDispute.LastUpdated = time.Now().Format(time.RFC850)
 
 	err = hdls.overwriteCustomerDispute(existingDispute)

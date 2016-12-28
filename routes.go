@@ -48,8 +48,8 @@ func (hdls *HDLS) RunImpl(function string, args []string) ([]byte, error) {
 		return nil, hdls.sendToBankFromPISP(disputeContent)
 	case "updateBankInformation":
 		return nil, hdls.updateBankInformation(disputeContent)
-	case "resolveDispute":
-		return nil, hdls.resolveDispute(disputeContent)
+	case "proposeResolution":
+		return nil, hdls.proposeResolution(disputeContent)
 	default:
 		return nil, errors.New("UNKNOWN_INVOCATION|Received unknown function invocation")
 	}
