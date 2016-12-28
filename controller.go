@@ -503,12 +503,10 @@ func (hdls *HDLS) proposeResolution(disputeContent CustomerDispute) error {
 		return errors.New("proposeResolution: Existing dispute with id " + disputeContent.Id + " not found.")
 	}
 	found := false
-	var i int
 	for index, element := range existingDispute.Owner {
 		// element is the element from someSlice for where we are
 		if element == "pisp" {
 			found = true
-			i = index
 		}
 	}
 	if found == false {
