@@ -583,7 +583,7 @@ func (hdls *HDLS) approveResolution(disputeContent CustomerDispute) error {
 	existingDispute.Audit = append(existingDispute.Audit, string(b))
 	existingDispute.Owner = removeElem(existingDispute.Owner, index)
 	if len(existingDispute.Owner) == 0 {
-		if existingDispute.Resolution.Type == "Against Customer" {
+		if existingDispute.Resolution.Outcome == "Against Customer" {
 			existingDispute.Status = "Dispute Closed"
 			existingDispute.Owner = []string{"customer"}
 		} else {
