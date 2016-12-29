@@ -552,7 +552,6 @@ func (hdls *HDLS) proposeResolution(disputeContent CustomerDispute) error {
 
 func (hdls *HDLS) approveResolution(disputeContent CustomerDispute) error {
 	stub := hdls.db
-	uuid := stub.GetTxID()
 	var err error
 	existingDispute, err2 := hdls.getCustomerDispute(disputeContent.Id)
 
@@ -604,7 +603,6 @@ func (hdls *HDLS) approveResolution(disputeContent CustomerDispute) error {
 
 func (hdls *HDLS) rejectResolution(disputeContent CustomerDispute) error {
 	stub := hdls.db
-	uuid := stub.GetTxID()
 	var err error
 	existingDispute, err2 := hdls.getCustomerDispute(disputeContent.Id)
 
