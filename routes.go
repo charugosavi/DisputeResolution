@@ -50,6 +50,10 @@ func (hdls *HDLS) RunImpl(function string, args []string) ([]byte, error) {
 		return nil, hdls.updateBankInformation(disputeContent)
 	case "proposeResolution":
 		return nil, hdls.proposeResolution(disputeContent)
+	case "approveResolution":
+		return nil, hdls.approveResolution(disputeContent)
+	case "rejectResolution":
+		return nil, hdls.rejectResolution(disputeContent)
 	default:
 		return nil, errors.New("UNKNOWN_INVOCATION|Received unknown function invocation")
 	}
