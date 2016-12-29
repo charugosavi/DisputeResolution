@@ -474,7 +474,7 @@ func (hdls *HDLS) updateBankInformation(disputeContent CustomerDispute) error {
 
 	existingDispute.Owner = removeElem(existingDispute.Owner, i)
 	if len(existingDispute.Owner) == 0 {
-		existingDispute.Status = "Validating"
+		existingDispute.Status = "Waiting for Resolution"
 		existingDispute.Owner = append(existingDispute.Owner, "pisp")
 	} else {
 		existingDispute.Status = disputeContent.Status
