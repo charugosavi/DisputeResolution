@@ -37,15 +37,10 @@ func (hdls *HDLS) RunImpl(function string, args []string) ([]byte, error) {
 	//Dispute management functions
 	case "addCustomerDispute":
 		return nil, hdls.addNewCustomerDispute(disputeContent)
-
-	case "updateCustomerDispute":
-		return nil, hdls.updateCustomerDispute(disputeContent)
 	case "updatePISPInformation":
 		return nil, hdls.updatePISPInformation(disputeContent)
 	case "updateMerchantInformation":
 		return nil, hdls.updateMerchantInformation(disputeContent)
-	case "sendToBankFromPISP":
-		return nil, hdls.sendToBankFromPISP(disputeContent)
 	case "updateBankInformation":
 		return nil, hdls.updateBankInformation(disputeContent)
 	case "proposeResolution":
@@ -54,6 +49,8 @@ func (hdls *HDLS) RunImpl(function string, args []string) ([]byte, error) {
 		return nil, hdls.approveResolution(disputeContent)
 	case "rejectResolution":
 		return nil, hdls.rejectResolution(disputeContent)
+	case "executeResolution":
+		return nil, hdls.executeResolution(disputeContent)
 	default:
 		return nil, errors.New("UNKNOWN_INVOCATION|Received unknown function invocation")
 	}

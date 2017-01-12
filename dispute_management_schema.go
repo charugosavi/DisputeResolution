@@ -27,11 +27,11 @@ type TransactionInfos struct {
 
 // Invovled party information structure. Used to represent Merchant, PISP and Bank transaction information.
 type Customer struct {
-	Id                string           `json:"id"` //@PK
+	Id                string           `json:"id"`         //@PK
+	CustomerId        string           `json:"customerId"` //@index
+	AccountId         string           `json:"accountId"`  //@index
 	Name              string           `json:"name"`
-	Branch            string           `json:"branch"`
-	Terminal          string           `json:"terminal"`
-	Cashier           string           `json:"cashier"`
+	Comments          string           `json:"comments"`
 	TransactionInfo   *TransactionInfo `json:"transaction"`
 	TransactionInfoId string           //@index
 	Receipts          []string         `json:"receipts"`
@@ -46,6 +46,7 @@ type Bank struct {
 	Branch            string           `json:"branch"`
 	Terminal          string           `json:"terminal"`
 	Cashier           string           `json:"cashier"`
+	Comments          string           `json:"comments"`
 	TransactionInfo   *TransactionInfo `json:"transaction"`
 	TransactionInfoId string           //@index
 	Receipts          []string         `json:"receipts"`
@@ -60,6 +61,7 @@ type Merchant struct {
 	Branch            string           `json:"branch"`
 	Terminal          string           `json:"terminal"`
 	Cashier           string           `json:"cashier"`
+	Comments          string           `json:"comments"`
 	TransactionInfo   *TransactionInfo `json:"transaction"`
 	TransactionInfoId string           //@index
 	Receipts          []string         `json:"receipts"`
@@ -74,6 +76,7 @@ type PISP struct {
 	Branch            string           `json:"branch"`
 	Terminal          string           `json:"terminal"`
 	Cashier           string           `json:"cashier"`
+	Comments          string           `json:"comments"`
 	TransactionInfo   *TransactionInfo `json:"transaction"`
 	TransactionInfoId string           //@index
 	Receipts          []string         `json:"receipts"`
@@ -98,28 +101,42 @@ type Resolutions struct {
 	Data []Resolution
 }
 
+// Invovled party information structure. Used to represent Merchant, PISP and Bank transaction information.
+type ResolutionExecution struct {
+	Id                string           `json:"id"` //@PK
+	Owner             string           `json:"owner"`
+	TransactionInfo   *TransactionInfo `json:"transaction"`
+	TransactionInfoId string
+	Comments          string `json:"comments"`
+}
+
+type ResolutionExecutions struct {
+	Data []ResolutionExecution `json:"execution"`
+}
+
 // Customer initiated dispute structure
 type CustomerDispute struct {
-	Id                          string                     `json:"disputeId"` //@PK
-	TransactionIdentification   *TransactionIdentification `json:"transaction"`
-	TransactionIdentificationId string                     //@index
-	DisputeType                 string                     `json:"disputetype"`
-	Comments                    string                     `json:"comments"`
-	Customer                    *Customer                  `json:"customer"`
-	CustomerId                  string                     //@index
-	Bank                        *Bank                      `json:"bank"`
-	BankId                      string                     //@index
-	PISP                        *PISP                      `json:"pisp"`
-	PISPId                      string                     //@index
-	Merchant                    *Merchant                  `json:"merchant"`
-	MerchantId                  string                     //@index
-	Status                      string                     `json:"status"` //@index
-	CreatedDate                 string                     `json:"created"`
-	LastUpdated                 string                     `json:"updated"`
-	Resolution                  *Resolution                `json:"resolution"`
-	ResolutionId                string                     //@index
-	Owner                       []string                   `json:"owner"`
-	Audit                       []string                   `json:"audit"`
+	Id                    string           `json:"disputeId"` //@PK
+	TransactionInfo       *TransactionInfo `json:"transaction"`
+	TransactionInfoId     string           //@index
+	DisputeType           string           `json:"disputetype"`
+	Customer              *Customer        `json:"customer"`
+	CustomerId            string           //@index
+	Bank                  *Bank            `json:"bank"`
+	BankId                string           //@index
+	PISP                  *PISP            `json:"pisp"`
+	PISPId                string           //@index
+	Merchant              *Merchant        `json:"merchant"`
+	MerchantId            string           //@index
+	Status                string           `json:"status"` //@index
+	CreatedDate           string           `json:"created"`
+	LastUpdated           string           `json:"updated"`
+	Resolution            *Resolution      `json:"resolution"`
+	ResolutionId          string           //@index
+	ResolutionExecution   []*Resolution    `json:"execution"`
+	ResolutionExecutionId string           //@index
+	Owner                 []string         `json:"owner"`
+	Audit                 []string         `json:"audit"`
 }
 
 type CustomerDisputes struct {
