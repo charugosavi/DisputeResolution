@@ -107,7 +107,8 @@ type ResolutionExecution struct {
 	Owner             string           `json:"owner"`
 	TransactionInfo   *TransactionInfo `json:"transaction"`
 	TransactionInfoId string
-	Comments          string `json:"comments"`
+	Comments          string   `json:"comments"`
+	Receipts          []string `json:"receipts"`
 }
 
 type ResolutionExecutions struct {
