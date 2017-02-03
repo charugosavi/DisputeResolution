@@ -152,11 +152,13 @@ func (this *HDLS) put<?php echo $model; ?>(x *<?php echo $model; ?>) error {
 
 <?php  foreach ($definition["relations"] as $relation) { ?>
 	//Save dst.<?php echo $relation["element"]; ?> as a separate entity
-	if dst.<?php echo $relation["element"]; ?>.Id == "" {
-		dst.<?php echo $relation["element"]; ?>.Id = dst.Id + "_<?php echo $relation["element"]; ?>"
-		err1 := this.put<?php echo $relation["model"]; ?>(dst.<?php echo $relation["element"]; ?>)
-		if err1 != nil {
-			return err1
+	if dst.<?php echo $relation["element"]; ?> != nil {
+		if dst.<?php echo $relation["element"]; ?>.Id == "" {
+			dst.<?php echo $relation["element"]; ?>.Id = dst.Id + "_<?php echo $relation["element"]; ?>"
+			err1 := this.put<?php echo $relation["model"]; ?>(dst.<?php echo $relation["element"]; ?>)
+			if err1 != nil {
+				return err1
+			}
 		}
 	}
 <?php }?>
