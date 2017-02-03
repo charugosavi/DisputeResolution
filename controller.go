@@ -11,8 +11,6 @@ func (hdls *HDLS) addNewCustomerDispute(disputeContent CustomerDispute) error {
 }
 
 func (hdls *HDLS) updatePISPInformation(disputeContent CustomerDispute) error {
-	stub := hdls.db
-	uuid := stub.GetTxID()
 	var err error
 	existingDispute, err2 := hdls.getCustomerDispute(disputeContent.Id)
 
@@ -101,8 +99,6 @@ func (hdls *HDLS) updateMerchantInformation(disputeContent CustomerDispute) erro
 }
 
 func (hdls *HDLS) updateBankInformation(disputeContent CustomerDispute) error {
-	stub := hdls.db
-	uuid := stub.GetTxID()
 	var err error
 	existingDispute, err2 := hdls.getCustomerDispute(disputeContent.Id)
 
