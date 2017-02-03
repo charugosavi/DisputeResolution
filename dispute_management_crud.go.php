@@ -43,6 +43,20 @@ $old_error_handler = set_error_handler("terminate_missing_variables");
 $schema = loadSchema("dispute_management_schema.go");
 $models = array_keys($schema);
 ?>
+
+//List structures
+<?php
+foreach ($schema as $model => $definition) {
+	if ($definition["listable"] && $model != "Reference") { ?>
+type <?php echo $model; ?>s struct {
+	Data []<?php echo $model; ?>
+	
+}	
+<?php
+	}
+}
+?>
+
 type Dump struct {
 <?php
 foreach ($schema as $model => $definition) {
@@ -60,11 +74,9 @@ func (this *HDLS) dump() (*Dump, error) {
 <?php
 foreach ($schema as $model => $definition) {
 	if ($definition["listable"]) { ?>
-	{
-		d.<?php echo $model; ?>, err = this.list<?php echo $model; ?>s()
-		if err != nil {
-				return nil, err
-		}
+	d.<?php echo $model; ?>, err = this.list<?php echo $model; ?>s()
+	if err != nil {
+		return nil, err
 	}
 <?php
 	}
@@ -137,15 +149,26 @@ func (this *HDLS) put<?php echo $model; ?>(x *<?php echo $model; ?>) error {
 <?php  } ?>
 
 	dst := x	// copy
+
 <?php  foreach ($definition["relations"] as $relation) { ?>
-	dst.<?php echo $relation; ?> = nil
+	//Save dst.<?php echo $relation["element"]; ?> as a separate entity
+	if dst.<?php echo $relation["element"]; ?>.Id == "" {
+		dst.<?php echo $relation["element"]; ?>.Id = dst.Id + "_<?php echo $relation["element"]; ?>"
+		err1 := this.put<?php echo $relation["model"]; ?>(dst.<?php echo $relation["element"]; ?>)
+		if err1 != nil {
+			return err1
+		}
+	}
 <?php }?>
-	
+
+	//Remove all the referenced entities since they are already stored.
+<?php  foreach ($definition["relations"] as $relation) { ?>
+	dst.<?php echo $relation["element"]; ?> = nil
+<?php }?>	
 	err := this.putA("<?php echo $model; ?>", dst.Id, dst)
 	if err != nil {
 		return err
 	}
-
 <?php if ($definition["index"]) { ?>
 	var ref *Reference
 	var refId string
@@ -185,7 +208,7 @@ func (this *HDLS) get<?php echo $model; ?>(id string) (*<?php echo $model; ?>, e
 	}
 
 <?php  foreach ($definition["relations"] as $relation) { ?>
-	x.<?php echo $relation; ?>, err = this.get<?php echo $relation; ?>(x.<?php echo $relation; ?>Id)
+	x.<?php echo $relation["element"]; ?>, err = this.get<?php echo $relation["model"]; ?>(x.Id + "_<?php echo $relation["element"]; ?>")
 	if err != nil {
 		return nil, err
 	}
@@ -208,7 +231,7 @@ func (this *HDLS) list<?php echo $model; ?>s() (*<?php echo $model; ?>s, error) 
 		var x <?php echo $model; ?> 
 		if this.val(row, &x) == nil {
 <?php  foreach ($definition["relations"] as $relation) { ?>
-			x.<?php echo $relation; ?>, err = this.get<?php echo $relation; ?>(x.<?php echo $relation; ?>Id)
+			x.<?php echo $relation["element"]; ?>, err = this.get<?php echo $relation["model"]; ?>(x.Id + "_<?php echo $relation["element"]; ?>")
 			if err != nil {
 				continue
 			}
@@ -265,12 +288,10 @@ func (this *HDLS) id<?php echo $model; ?>(x *<?php echo $model; ?>) (string, err
 }
 
 func (this *HDLS) delete<?php echo $model; ?>(x *<?php echo $model; ?>) error {
-
 	var err error
-
 <?php if ($definition["index"]) { ?>
 	var ref *Reference
-	var refId string
+	var refId string	
 
 	curr, err := this.get<?php echo $model; ?>(x.Id)
 	if err != nil {
@@ -279,7 +300,6 @@ func (this *HDLS) delete<?php echo $model; ?>(x *<?php echo $model; ?>) error {
 		return errors.New("NOT_FOUND")
 	}
 <?php }?>
-
 <?php foreach ($definition["index"] as $field) { ?>
 	refId = this.refId<?php echo $model; ?><?php echo $field["name"]; ?>(curr.<?php echo $field["name"]; ?>)
 	ref, _ = this.getReference(refId)
@@ -294,7 +314,16 @@ func (this *HDLS) delete<?php echo $model; ?>(x *<?php echo $model; ?>) error {
 		}
 	}
 <?php }?>
-
+<?php  foreach ($definition["relations"] as $relation) { ?>
+	//Delete x.<?php echo $relation["element"]; ?>
+	
+	if(x.<?php echo $relation["element"]; ?> != nil) {
+		err = this.delete<?php echo $relation["model"]; ?>(x.<?php echo $relation["element"]; ?>)
+		if err != nil {
+			return err
+		}
+	}
+<?php }?>
 	err = this.delete("<?php echo $model; ?>", x.Id)
 	if err != nil {
 		return err

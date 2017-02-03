@@ -29,7 +29,7 @@ function loadSchema($source) {
 		// Tables
 		if ( $prev_model && 
 			preg_match("/type\\s+({$prev_model}s)\\s+struct/", $line, $matches)) {
-
+			
 			$schema[$prev_model]["listable"] = true;
 		}
 		else if (preg_match("#type\\s+({$ident})\\s+struct.*@dominant#", $line, $matches)) {
@@ -37,7 +37,7 @@ function loadSchema($source) {
 		else if (preg_match("/type\\s+({$ident})\\s+struct/", $line, $matches)) {
 			list($_, $model) = $matches;
 			$schema[$model] = array(	
-					"listable" => false, "PK"=>array(), "relations"=>array(), "index"=>array());
+					"listable" => true, "PK"=>array(), "relations"=>array(), "index"=>array());
 			$prev_model = $model;
 		}
 
@@ -52,7 +52,7 @@ function loadSchema($source) {
 			if ( preg_match("#({$ident})\\s+\*({$ident})#", $line, $matches)) {	
 				if ( $prev_model == "Trade" ) continue;// FIXME magic variable
 
-				$schema[$prev_model]["relations"][] = $matches[1];
+				$schema[$prev_model]["relations"][] = array("element"=>$matches[1], "model"=>$matches[2]);
 			}
 
 			if ( preg_match("#\\s+(Name)\\s+({$ident})#", $line, $matches)) {	

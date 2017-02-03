@@ -7,92 +7,7 @@ import (
 )
 
 func (hdls *HDLS) addNewCustomerDispute(disputeContent CustomerDispute) error {
-	stub := hdls.db
-	uuid := stub.GetTxID()
-	var err error
-
-	if disputeContent.Customer != nil {
-		disputeContent.Customer.Id = "Customer_" + uuid
-		disputeContent.CustomerId = "Customer_" + uuid
-		if disputeContent.Customer.TransactionInfo != nil {
-			disputeContent.Customer.TransactionInfoId = "Customer_TxnInfo_" + uuid
-			disputeContent.Customer.TransactionInfo.Id = "Customer_TxnInfo_" + uuid
-			err = hdls.putTransactionInfo(disputeContent.Customer.TransactionInfo)
-			if err != nil {
-				return err
-			}
-		}
-		err = hdls.putCustomer(disputeContent.Customer)
-		if err != nil {
-			return err
-		}
-	}
-
-	if disputeContent.Bank != nil {
-		disputeContent.Bank.Id = "Bank_" + uuid
-		disputeContent.BankId = "Bank_" + uuid
-		if disputeContent.Bank.TransactionInfo != nil {
-			disputeContent.Bank.TransactionInfoId = "Bank_TxnInfo_" + uuid
-			disputeContent.Bank.TransactionInfo.Id = "Bank_TxnInfo_" + uuid
-			err = hdls.putTransactionInfo(disputeContent.Bank.TransactionInfo)
-			if err != nil {
-				return err
-			}
-		}
-		err = hdls.putBank(disputeContent.Bank)
-		if err != nil {
-			return err
-		}
-	}
-
-	if disputeContent.PISP != nil {
-		disputeContent.PISP.Id = "PISP_" + uuid
-		disputeContent.PISPId = "PISP_" + uuid
-		if disputeContent.PISP.TransactionInfo != nil {
-			disputeContent.PISP.TransactionInfoId = "PISP_TxnInfo_" + uuid
-			disputeContent.PISP.TransactionInfo.Id = "PISP_TxnInfo_" + uuid
-			err = hdls.putTransactionInfo(disputeContent.PISP.TransactionInfo)
-			if err != nil {
-				return err
-			}
-		}
-		err = hdls.putPISP(disputeContent.PISP)
-		if err != nil {
-			return err
-		}
-	}
-
-	if disputeContent.Merchant != nil {
-		disputeContent.Merchant.Id = "Merchant_" + uuid
-		disputeContent.MerchantId = "Merchant_" + uuid
-		if disputeContent.Merchant.TransactionInfo != nil {
-			disputeContent.Merchant.TransactionInfoId = "Merchant_TxnInfo_" + uuid
-			disputeContent.Merchant.TransactionInfo.Id = "Merchant_TxnInfo_" + uuid
-			err = hdls.putTransactionInfo(disputeContent.Merchant.TransactionInfo)
-			if err != nil {
-				return err
-			}
-		}
-		err = hdls.putMerchant(disputeContent.Merchant)
-		if err != nil {
-			return err
-		}
-	}
-
-	if disputeContent.Resolution != nil {
-		disputeContent.Resolution.Id = "Resolution_" + uuid
-		disputeContent.ResolutionId = "Resolution_" + uuid
-		err = hdls.putResolution(disputeContent.Resolution)
-		if err != nil {
-			return err
-		}
-	}
-
-	err = hdls.putCustomerDispute(&disputeContent)
-	if err != nil {
-		return err
-	}
-	return nil
+	return hdls.putCustomerDispute(&disputeContent)
 }
 
 func (hdls *HDLS) updatePISPInformation(disputeContent CustomerDispute) error {
@@ -111,7 +26,6 @@ func (hdls *HDLS) updatePISPInformation(disputeContent CustomerDispute) error {
 
 	found := false
 	for _, element := range existingDispute.Owner {
-		// element is the element from someSlice for where we are
 		if element == "pisp" {
 			found = true
 		}
@@ -127,43 +41,8 @@ func (hdls *HDLS) updatePISPInformation(disputeContent CustomerDispute) error {
 		return e
 	}
 	existingDispute.Audit = append(existingDispute.Audit, string(b))
-
-	if disputeContent.PISP != nil {
-		disputeContent.PISP.Id = "PISP_" + uuid
-		existingDispute.PISPId = "PISP_" + uuid
-		if disputeContent.PISP.TransactionInfo != nil {
-			disputeContent.PISP.TransactionInfoId = "PISP_TxnInfo_" + uuid
-			disputeContent.PISP.TransactionInfo.Id = "PISP_TxnInfo_" + uuid
-			err = hdls.putTransactionInfo(disputeContent.PISP.TransactionInfo)
-			if err != nil {
-				return err
-			}
-		}
-		err = hdls.putPISP(disputeContent.PISP)
-		if err != nil {
-			return err
-		}
-	}
-
-	if disputeContent.Merchant != nil {
-		if existingDispute.Merchant == nil {
-			disputeContent.Merchant.Id = "Merchant_" + uuid
-			existingDispute.MerchantId = "Merchant_" + uuid
-
-			err = hdls.putMerchant(disputeContent.Merchant)
-		} else {
-			existingMerchant, err3 := hdls.getMerchant(existingDispute.Merchant.Id)
-			if err3 != nil {
-				return err3
-			}
-			existingMerchant.Name = disputeContent.Merchant.Name
-			err = hdls.overwriteMerchant(existingMerchant)
-		}
-		if err != nil {
-			return err
-		}
-	}
-
+	existingDispute.PISP = disputeContent.PISP
+	existingDispute.Merchant.Name = disputeContent.Merchant.Name
 	existingDispute.Owner = []string{"merchant", "bank"}
 	existingDispute.Status = disputeContent.Status
 	existingDispute.LastUpdated = time.Now().Format(time.RFC850)
@@ -176,8 +55,6 @@ func (hdls *HDLS) updatePISPInformation(disputeContent CustomerDispute) error {
 }
 
 func (hdls *HDLS) updateMerchantInformation(disputeContent CustomerDispute) error {
-	stub := hdls.db
-	uuid := stub.GetTxID()
 	var err error
 	existingDispute, err2 := hdls.getCustomerDispute(disputeContent.Id)
 
@@ -191,7 +68,6 @@ func (hdls *HDLS) updateMerchantInformation(disputeContent CustomerDispute) erro
 	found := false
 	var i int
 	for index, element := range existingDispute.Owner {
-		// element is the element from someSlice for where we are
 		if element == "merchant" {
 			found = true
 			i = index
@@ -207,39 +83,7 @@ func (hdls *HDLS) updateMerchantInformation(disputeContent CustomerDispute) erro
 		return e
 	}
 	existingDispute.Audit = append(existingDispute.Audit, string(b))
-
-	if disputeContent.Merchant != nil {
-		if disputeContent.Merchant.TransactionInfo != nil {
-			disputeContent.Merchant.TransactionInfo.Id = "Merchant_TxnInfo_" + uuid
-			err = hdls.putTransactionInfo(disputeContent.Merchant.TransactionInfo)
-			if err != nil {
-				return err
-			}
-		}
-		if existingDispute.Merchant == nil {
-			disputeContent.Merchant.Id = "Merchant_" + uuid
-			existingDispute.MerchantId = "Merchant_" + uuid
-			disputeContent.Merchant.TransactionInfoId = "Merchant_TxnInfo_" + uuid
-			err = hdls.putMerchant(disputeContent.Merchant)
-		} else {
-			existingMerchant, err3 := hdls.getMerchant(existingDispute.Merchant.Id)
-			if err3 != nil {
-				return err3
-			}
-			existingMerchant.Name = disputeContent.Merchant.Name
-			existingMerchant.Branch = disputeContent.Merchant.Branch
-			existingMerchant.Terminal = disputeContent.Merchant.Terminal
-			existingMerchant.Cashier = disputeContent.Merchant.Cashier
-			existingMerchant.Receipts = disputeContent.Merchant.Receipts
-			existingMerchant.Comments = disputeContent.Merchant.Comments
-			existingMerchant.TransactionInfoId = "Merchant_TxnInfo_" + uuid
-			err = hdls.overwriteMerchant(existingMerchant)
-		}
-		if err != nil {
-			return err
-		}
-	}
-
+	existingDispute.Merchant = disputeContent.Merchant
 	existingDispute.Owner = removeElem(existingDispute.Owner, i)
 	if len(existingDispute.Owner) == 0 {
 		existingDispute.Status = "Waiting for Resolution"
@@ -272,7 +116,6 @@ func (hdls *HDLS) updateBankInformation(disputeContent CustomerDispute) error {
 	found := false
 	var i int
 	for index, element := range existingDispute.Owner {
-		// element is the element from someSlice for where we are
 		if element == "bank" {
 			found = true
 			i = index
@@ -288,39 +131,7 @@ func (hdls *HDLS) updateBankInformation(disputeContent CustomerDispute) error {
 		return e
 	}
 	existingDispute.Audit = append(existingDispute.Audit, string(b))
-
-	if disputeContent.Bank != nil {
-		if disputeContent.Bank.TransactionInfo != nil {
-			disputeContent.Bank.TransactionInfo.Id = "Bank_TxnInfo_" + uuid
-			err = hdls.putTransactionInfo(disputeContent.Bank.TransactionInfo)
-			if err != nil {
-				return err
-			}
-		}
-		if existingDispute.Bank == nil {
-			disputeContent.Bank.Id = "Bank_" + uuid
-			existingDispute.BankId = "Bank_" + uuid
-			disputeContent.Bank.TransactionInfoId = "Bank_TxnInfo_" + uuid
-			err = hdls.putBank(disputeContent.Bank)
-		} else {
-			existingBank, err3 := hdls.getBank(existingDispute.Bank.Id)
-			if err3 != nil {
-				return err3
-			}
-			existingBank.Name = disputeContent.Bank.Name
-			existingBank.Branch = disputeContent.Bank.Branch
-			existingBank.Terminal = disputeContent.Bank.Terminal
-			existingBank.Cashier = disputeContent.Bank.Cashier
-			existingBank.Receipts = disputeContent.Bank.Receipts
-			existingBank.Comments = disputeContent.Bank.Comments
-			existingBank.TransactionInfoId = "Bank_TxnInfo_" + uuid
-			err = hdls.overwriteBank(existingBank)
-		}
-		if err != nil {
-			return err
-		}
-	}
-
+	existingDispute.Bank = disputeContent.Bank
 	existingDispute.Owner = removeElem(existingDispute.Owner, i)
 	if len(existingDispute.Owner) == 0 {
 		existingDispute.Status = "Waiting for Resolution"
@@ -339,8 +150,6 @@ func (hdls *HDLS) updateBankInformation(disputeContent CustomerDispute) error {
 }
 
 func (hdls *HDLS) proposeResolution(disputeContent CustomerDispute) error {
-	stub := hdls.db
-	uuid := stub.GetTxID()
 	var err error
 	existingDispute, err2 := hdls.getCustomerDispute(disputeContent.Id)
 
@@ -368,26 +177,7 @@ func (hdls *HDLS) proposeResolution(disputeContent CustomerDispute) error {
 		return e
 	}
 	existingDispute.Audit = append(existingDispute.Audit, string(b))
-
-	if disputeContent.Resolution != nil {
-		disputeContent.Resolution.Id = "Resolution_" + uuid
-		disputeContent.Resolution.ResolutionTime = time.Now().Format(time.RFC850)
-		existingDispute.ResolutionId = "Resolution_" + uuid
-		disputeContent.Resolution.TransactionInfoId = "Resolution_Txn_" + uuid
-		disputeContent.Resolution.TransactionInfo.Id = "Resolution_Txn_" + uuid
-		err = hdls.putTransactionInfo(disputeContent.Resolution.TransactionInfo)
-		if err != nil {
-			return err
-		}
-		disputeContent.Resolution.TransactionInfo = nil
-		err = hdls.putResolution(disputeContent.Resolution)
-		if err != nil {
-			return err
-		}
-	} else {
-		return errors.New("Resolution is missing")
-	}
-
+	existingDispute.Resolution = disputeContent.Resolution
 	existingDispute.Owner = []string{"bank", "merchant"}
 	existingDispute.Status = "Resolution Proposed"
 	existingDispute.LastUpdated = time.Now().Format(time.RFC850)
@@ -414,7 +204,6 @@ func (hdls *HDLS) approveResolution(disputeContent CustomerDispute) error {
 	o := disputeContent.Owner[0]
 	var index int
 	for i, element := range existingDispute.Owner {
-		// element is the element from someSlice for where we are
 		if element == o {
 			found = true
 			index = i
@@ -463,7 +252,6 @@ func (hdls *HDLS) rejectResolution(disputeContent CustomerDispute) error {
 	found := false
 	o := disputeContent.Owner[0]
 	for _, element := range existingDispute.Owner {
-		// element is the element from someSlice for where we are
 		if element == o {
 			found = true
 		}
