@@ -40,7 +40,7 @@ func (hdls *HDLS) updatePISPInformation(disputeContent CustomerDispute) error {
 	}
 	existingDispute.Audit = append(existingDispute.Audit, string(b))
 	existingDispute.PISP = disputeContent.PISP
-	existingDispute.Merchant.Name = disputeContent.Merchant.Name
+	existingDispute.Merchant = disputeContent.Merchant
 	existingDispute.Owner = []string{"merchant", "bank"}
 	existingDispute.Status = disputeContent.Status
 	existingDispute.LastUpdated = time.Now().Format(time.RFC850)
