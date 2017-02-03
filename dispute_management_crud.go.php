@@ -299,7 +299,7 @@ func (this *HDLS) delete<?php echo $model; ?>(x *<?php echo $model; ?>) error {
 	if err != nil {
 		return err
 	} else if curr == nil {
-		return errors.New("NOT_FOUND")
+		return nil
 	}
 <?php }?>
 <?php foreach ($definition["index"] as $field) { ?>
