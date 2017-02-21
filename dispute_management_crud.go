@@ -649,9 +649,7 @@ func (this *HDLS) putCustomer(x *Customer) error {
 
 	//Save dst.TransactionInfo as a separate entity
 	if dst.TransactionInfo != nil {
-		if dst.TransactionInfo.Id == "" {
-			dst.TransactionInfo.Id = dst.Id + "_TransactionInfo"			
-		}
+		dst.TransactionInfo.Id = dst.Id + "_TransactionInfo"
 		err1 := this.putTransactionInfo(dst.TransactionInfo)
 		if err1 != nil {
 			return err1
@@ -864,9 +862,7 @@ func (this *HDLS) putBank(x *Bank) error {
 
 	//Save dst.TransactionInfo as a separate entity
 	if dst.TransactionInfo != nil {
-		if dst.TransactionInfo.Id == "" {
-			dst.TransactionInfo.Id = dst.Id + "_TransactionInfo"			
-		}
+		dst.TransactionInfo.Id = dst.Id + "_TransactionInfo"
 		err1 := this.putTransactionInfo(dst.TransactionInfo)
 		if err1 != nil {
 			return err1
@@ -980,9 +976,7 @@ func (this *HDLS) putMerchant(x *Merchant) error {
 
 	//Save dst.TransactionInfo as a separate entity
 	if dst.TransactionInfo != nil {
-		if dst.TransactionInfo.Id == "" {
-			dst.TransactionInfo.Id = dst.Id + "_TransactionInfo"			
-		}
+		dst.TransactionInfo.Id = dst.Id + "_TransactionInfo"
 		err1 := this.putTransactionInfo(dst.TransactionInfo)
 		if err1 != nil {
 			return err1
@@ -1096,9 +1090,7 @@ func (this *HDLS) putPISP(x *PISP) error {
 
 	//Save dst.TransactionInfo as a separate entity
 	if dst.TransactionInfo != nil {
-		if dst.TransactionInfo.Id == "" {
-			dst.TransactionInfo.Id = dst.Id + "_TransactionInfo"			
-		}
+		dst.TransactionInfo.Id = dst.Id + "_TransactionInfo"
 		err1 := this.putTransactionInfo(dst.TransactionInfo)
 		if err1 != nil {
 			return err1
@@ -1215,9 +1207,7 @@ func (this *HDLS) putResolution(x *Resolution) error {
 
 	//Save dst.TransactionInfo as a separate entity
 	if dst.TransactionInfo != nil {
-		if dst.TransactionInfo.Id == "" {
-			dst.TransactionInfo.Id = dst.Id + "_TransactionInfo"			
-		}
+		dst.TransactionInfo.Id = dst.Id + "_TransactionInfo"
 		err1 := this.putTransactionInfo(dst.TransactionInfo)
 		if err1 != nil {
 			return err1
@@ -1386,9 +1376,7 @@ func (this *HDLS) putResolutionExecution(x *ResolutionExecution) error {
 
 	//Save dst.TransactionInfo as a separate entity
 	if dst.TransactionInfo != nil {
-		if dst.TransactionInfo.Id == "" {
-			dst.TransactionInfo.Id = dst.Id + "_TransactionInfo"			
-		}
+		dst.TransactionInfo.Id = dst.Id + "_TransactionInfo"
 		err1 := this.putTransactionInfo(dst.TransactionInfo)
 		if err1 != nil {
 			return err1
@@ -1505,9 +1493,7 @@ func (this *HDLS) putCustomerDispute(x *CustomerDispute) error {
 
 	//Save dst.TransactionInfo as a separate entity
 	if dst.TransactionInfo != nil {
-		if dst.TransactionInfo.Id == "" {
-			dst.TransactionInfo.Id = dst.Id + "_TransactionInfo"			
-		}
+		dst.TransactionInfo.Id = dst.Id + "_TransactionInfo"
 		err1 := this.putTransactionInfo(dst.TransactionInfo)
 		if err1 != nil {
 			return err1
@@ -1515,9 +1501,7 @@ func (this *HDLS) putCustomerDispute(x *CustomerDispute) error {
 	}
 	//Save dst.Customer as a separate entity
 	if dst.Customer != nil {
-		if dst.Customer.Id == "" {
-			dst.Customer.Id = dst.Id + "_Customer"			
-		}
+		dst.Customer.Id = dst.Id + "_Customer"
 		err1 := this.putCustomer(dst.Customer)
 		if err1 != nil {
 			return err1
@@ -1525,9 +1509,7 @@ func (this *HDLS) putCustomerDispute(x *CustomerDispute) error {
 	}
 	//Save dst.Bank as a separate entity
 	if dst.Bank != nil {
-		if dst.Bank.Id == "" {
-			dst.Bank.Id = dst.Id + "_Bank"			
-		}
+		dst.Bank.Id = dst.Id + "_Bank"
 		err1 := this.putBank(dst.Bank)
 		if err1 != nil {
 			return err1
@@ -1535,9 +1517,7 @@ func (this *HDLS) putCustomerDispute(x *CustomerDispute) error {
 	}
 	//Save dst.PISP as a separate entity
 	if dst.PISP != nil {
-		if dst.PISP.Id == "" {
-			dst.PISP.Id = dst.Id + "_PISP"			
-		}
+		dst.PISP.Id = dst.Id + "_PISP"
 		err1 := this.putPISP(dst.PISP)
 		if err1 != nil {
 			return err1
@@ -1545,9 +1525,7 @@ func (this *HDLS) putCustomerDispute(x *CustomerDispute) error {
 	}
 	//Save dst.Merchant as a separate entity
 	if dst.Merchant != nil {
-		if dst.Merchant.Id == "" {
-			dst.Merchant.Id = dst.Id + "_Merchant"			
-		}
+		dst.Merchant.Id = dst.Id + "_Merchant"
 		err1 := this.putMerchant(dst.Merchant)
 		if err1 != nil {
 			return err1
@@ -1555,9 +1533,7 @@ func (this *HDLS) putCustomerDispute(x *CustomerDispute) error {
 	}
 	//Save dst.Resolution as a separate entity
 	if dst.Resolution != nil {
-		if dst.Resolution.Id == "" {
-			dst.Resolution.Id = dst.Id + "_Resolution"			
-		}
+		dst.Resolution.Id = dst.Id + "_Resolution"
 		err1 := this.putResolution(dst.Resolution)
 		if err1 != nil {
 			return err1
