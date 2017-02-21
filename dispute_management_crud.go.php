@@ -142,9 +142,11 @@ func (this *HDLS) refId<?php echo $model; ?><?php echo $field["name"]; ?>(v <?ph
 <?php } ?>
 
 func (this *HDLS) put<?php echo $model; ?>(x *<?php echo $model; ?>) error {
+	this.logger.Infof("Call: put<?php echo $model; ?> with id: " + x.Id)
 <?php  if ( $model != "InvokingStatus" ) { //FIXME magic varible ?>
 	if x.Id == "" {
 		x.Id, _ = this.id<?php echo $model; ?>(x)
+		this.logger.Infof("Id is set to: " + x.Id)
 	}
 <?php  } ?>
 
@@ -196,7 +198,7 @@ func (this *HDLS) put<?php echo $model; ?>(x *<?php echo $model; ?>) error {
 }
 
 func (this *HDLS) get<?php echo $model; ?>(id string) (*<?php echo $model; ?>, error) {
-	this.logger.Infof("Call: get<?php echo $model; ?>")
+	this.logger.Infof("Call: get<?php echo $model; ?> with id: " + id)
 
 	var x <?php echo $model; ?> 
 	err := this.getA("<?php echo $model; ?>", id, &x)
