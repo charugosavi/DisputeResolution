@@ -290,6 +290,7 @@ func (this *HDLS) id<?php echo $model; ?>(x *<?php echo $model; ?>) (string, err
 }
 
 func (this *HDLS) delete<?php echo $model; ?>(x *<?php echo $model; ?>) error {
+	this.logger.Infof("Call: delete<?php echo $model; ?> with id: " + x.Id)
 	var err error
 <?php if ($definition["index"]) { ?>
 	var ref *Reference
@@ -320,6 +321,7 @@ func (this *HDLS) delete<?php echo $model; ?>(x *<?php echo $model; ?>) error {
 	//Delete x.<?php echo $relation["element"]; ?>
 	
 	if(x.<?php echo $relation["element"]; ?> != nil) {
+		this.logger.Infof("Deleting x.<?php echo $relation["element"]; ?> with id: " + x.<?php echo $relation["element"]; ?>.Id)
 		err = this.delete<?php echo $relation["model"]; ?>(x.<?php echo $relation["element"]; ?>)
 		if err != nil {
 			return err

@@ -272,6 +272,7 @@ func (this *HDLS) idReference(x *Reference) (string, error) {
 }
 
 func (this *HDLS) deleteReference(x *Reference) error {
+	this.logger.Infof("Call: deleteReference with id: " + x.Id)
 	var err error
 	err = this.delete("Reference", x.Id)
 	if err != nil {
@@ -364,6 +365,7 @@ func (this *HDLS) idTransactionIdentification(x *TransactionIdentification) (str
 }
 
 func (this *HDLS) deleteTransactionIdentification(x *TransactionIdentification) error {
+	this.logger.Infof("Call: deleteTransactionIdentification with id: " + x.Id)
 	var err error
 	err = this.delete("TransactionIdentification", x.Id)
 	if err != nil {
@@ -456,6 +458,7 @@ func (this *HDLS) idTransactionInfo(x *TransactionInfo) (string, error) {
 }
 
 func (this *HDLS) deleteTransactionInfo(x *TransactionInfo) error {
+	this.logger.Infof("Call: deleteTransactionInfo with id: " + x.Id)
 	var err error
 	err = this.delete("TransactionInfo", x.Id)
 	if err != nil {
@@ -565,9 +568,11 @@ func (this *HDLS) idCustomer(x *Customer) (string, error) {
 }
 
 func (this *HDLS) deleteCustomer(x *Customer) error {
+	this.logger.Infof("Call: deleteCustomer with id: " + x.Id)
 	var err error
 	//Delete x.TransactionInfo	
 	if(x.TransactionInfo != nil) {
+		this.logger.Infof("Deleting x.TransactionInfo with id: " + x.TransactionInfo.Id)
 		err = this.deleteTransactionInfo(x.TransactionInfo)
 		if err != nil {
 			return err
@@ -681,9 +686,11 @@ func (this *HDLS) idBank(x *Bank) (string, error) {
 }
 
 func (this *HDLS) deleteBank(x *Bank) error {
+	this.logger.Infof("Call: deleteBank with id: " + x.Id)
 	var err error
 	//Delete x.TransactionInfo	
 	if(x.TransactionInfo != nil) {
+		this.logger.Infof("Deleting x.TransactionInfo with id: " + x.TransactionInfo.Id)
 		err = this.deleteTransactionInfo(x.TransactionInfo)
 		if err != nil {
 			return err
@@ -797,9 +804,11 @@ func (this *HDLS) idMerchant(x *Merchant) (string, error) {
 }
 
 func (this *HDLS) deleteMerchant(x *Merchant) error {
+	this.logger.Infof("Call: deleteMerchant with id: " + x.Id)
 	var err error
 	//Delete x.TransactionInfo	
 	if(x.TransactionInfo != nil) {
+		this.logger.Infof("Deleting x.TransactionInfo with id: " + x.TransactionInfo.Id)
 		err = this.deleteTransactionInfo(x.TransactionInfo)
 		if err != nil {
 			return err
@@ -913,9 +922,11 @@ func (this *HDLS) idPISP(x *PISP) (string, error) {
 }
 
 func (this *HDLS) deletePISP(x *PISP) error {
+	this.logger.Infof("Call: deletePISP with id: " + x.Id)
 	var err error
 	//Delete x.TransactionInfo	
 	if(x.TransactionInfo != nil) {
+		this.logger.Infof("Deleting x.TransactionInfo with id: " + x.TransactionInfo.Id)
 		err = this.deleteTransactionInfo(x.TransactionInfo)
 		if err != nil {
 			return err
@@ -1029,9 +1040,11 @@ func (this *HDLS) idResolution(x *Resolution) (string, error) {
 }
 
 func (this *HDLS) deleteResolution(x *Resolution) error {
+	this.logger.Infof("Call: deleteResolution with id: " + x.Id)
 	var err error
 	//Delete x.TransactionInfo	
 	if(x.TransactionInfo != nil) {
+		this.logger.Infof("Deleting x.TransactionInfo with id: " + x.TransactionInfo.Id)
 		err = this.deleteTransactionInfo(x.TransactionInfo)
 		if err != nil {
 			return err
@@ -1145,9 +1158,11 @@ func (this *HDLS) idResolutionExecution(x *ResolutionExecution) (string, error) 
 }
 
 func (this *HDLS) deleteResolutionExecution(x *ResolutionExecution) error {
+	this.logger.Infof("Call: deleteResolutionExecution with id: " + x.Id)
 	var err error
 	//Delete x.TransactionInfo	
 	if(x.TransactionInfo != nil) {
+		this.logger.Infof("Deleting x.TransactionInfo with id: " + x.TransactionInfo.Id)
 		err = this.deleteTransactionInfo(x.TransactionInfo)
 		if err != nil {
 			return err
@@ -1346,9 +1361,11 @@ func (this *HDLS) idCustomerDispute(x *CustomerDispute) (string, error) {
 }
 
 func (this *HDLS) deleteCustomerDispute(x *CustomerDispute) error {
+	this.logger.Infof("Call: deleteCustomerDispute with id: " + x.Id)
 	var err error
 	//Delete x.TransactionInfo	
 	if(x.TransactionInfo != nil) {
+		this.logger.Infof("Deleting x.TransactionInfo with id: " + x.TransactionInfo.Id)
 		err = this.deleteTransactionInfo(x.TransactionInfo)
 		if err != nil {
 			return err
@@ -1356,6 +1373,7 @@ func (this *HDLS) deleteCustomerDispute(x *CustomerDispute) error {
 	}
 	//Delete x.Customer	
 	if(x.Customer != nil) {
+		this.logger.Infof("Deleting x.Customer with id: " + x.Customer.Id)
 		err = this.deleteCustomer(x.Customer)
 		if err != nil {
 			return err
@@ -1363,6 +1381,7 @@ func (this *HDLS) deleteCustomerDispute(x *CustomerDispute) error {
 	}
 	//Delete x.Bank	
 	if(x.Bank != nil) {
+		this.logger.Infof("Deleting x.Bank with id: " + x.Bank.Id)
 		err = this.deleteBank(x.Bank)
 		if err != nil {
 			return err
@@ -1370,6 +1389,7 @@ func (this *HDLS) deleteCustomerDispute(x *CustomerDispute) error {
 	}
 	//Delete x.PISP	
 	if(x.PISP != nil) {
+		this.logger.Infof("Deleting x.PISP with id: " + x.PISP.Id)
 		err = this.deletePISP(x.PISP)
 		if err != nil {
 			return err
@@ -1377,6 +1397,7 @@ func (this *HDLS) deleteCustomerDispute(x *CustomerDispute) error {
 	}
 	//Delete x.Merchant	
 	if(x.Merchant != nil) {
+		this.logger.Infof("Deleting x.Merchant with id: " + x.Merchant.Id)
 		err = this.deleteMerchant(x.Merchant)
 		if err != nil {
 			return err
@@ -1384,6 +1405,7 @@ func (this *HDLS) deleteCustomerDispute(x *CustomerDispute) error {
 	}
 	//Delete x.Resolution	
 	if(x.Resolution != nil) {
+		this.logger.Infof("Deleting x.Resolution with id: " + x.Resolution.Id)
 		err = this.deleteResolution(x.Resolution)
 		if err != nil {
 			return err
