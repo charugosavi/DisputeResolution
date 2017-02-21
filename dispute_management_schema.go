@@ -2,16 +2,16 @@ package main
 
 // Transaction and customer identification structure
 type TransactionIdentification struct {
-	Id            string `json:"id"`         //@PK
-	CustomerId    string `json:"customerId"` //@index
-	AccountId     string `json:"accountId"`  //@index
+	Id            string `json:"id"` //@PK
+	CustomerId    string `json:"customerId"`
+	AccountId     string `json:"accountId"`
 	TransactionId string `json:"transactionid"`
 }
 
 // Transaction information structure
 type TransactionInfo struct {
-	Id              string `json:"id"`            //@PK
-	TransactionId   string `json:"transactionId"` //@index
+	Id              string `json:"id"` //@PK
+	TransactionId   string `json:"transactionId"`
 	Amount          string `json:"amount"`
 	Currency        string `json:"currency"`
 	TransactionTime string `json:"time"`
@@ -19,9 +19,9 @@ type TransactionInfo struct {
 
 // Invovled party information structure. Used to represent Merchant, PISP and Bank transaction information.
 type Customer struct {
-	Id              string           `json:"id"`         //@PK
-	CustomerId      string           `json:"customerId"` //@index
-	AccountId       string           `json:"accountId"`  //@index
+	Id              string           `json:"id"` //@PK
+	CustomerId      string           `json:"customerId"`
+	AccountId       string           `json:"accountId"`
 	Name            string           `json:"name"`
 	Comments        string           `json:"comments"`
 	TransactionInfo *TransactionInfo `json:"transaction"`
@@ -65,7 +65,7 @@ type PISP struct {
 type Resolution struct {
 	Id              string           `json:"id"` //@PK
 	Type            string           `json:"type"`
-	Outcome         string           `json:"outcome"` //@index
+	Outcome         string           `json:"outcome"`
 	Description     string           `json:"description"`
 	ResolutionTime  string           `json:"resolutionTime"`
 	TransactionInfo *TransactionInfo `json:"transaction"`
@@ -89,7 +89,7 @@ type CustomerDispute struct {
 	Bank                *Bank            `json:"bank"`
 	PISP                *PISP            `json:"pisp"`
 	Merchant            *Merchant        `json:"merchant"`
-	Status              string           `json:"status"` //@index
+	Status              string           `json:"status"`
 	CreatedDate         string           `json:"created"`
 	LastUpdated         string           `json:"updated"`
 	Resolution          *Resolution      `json:"resolution"`
