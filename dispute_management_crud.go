@@ -202,8 +202,10 @@ func (this *HDLS) createSchema() {
 
 
 func (this *HDLS) putReference(x *Reference) error {
+	this.logger.Infof("Call: putReference with id: " + x.Id)
 	if x.Id == "" {
 		x.Id, _ = this.idReference(x)
+		this.logger.Infof("Id is set to: " + x.Id)
 	}
 
 	dst := x	// copy
@@ -220,7 +222,7 @@ func (this *HDLS) putReference(x *Reference) error {
 }
 
 func (this *HDLS) getReference(id string) (*Reference, error) {
-	this.logger.Infof("Call: getReference")
+	this.logger.Infof("Call: getReference with id: " + id)
 
 	var x Reference 
 	err := this.getA("Reference", id, &x)
@@ -298,8 +300,10 @@ func (this *HDLS) refIdTransactionIdentificationAccountId(v string) string {
 }
 
 func (this *HDLS) putTransactionIdentification(x *TransactionIdentification) error {
+	this.logger.Infof("Call: putTransactionIdentification with id: " + x.Id)
 	if x.Id == "" {
 		x.Id, _ = this.idTransactionIdentification(x)
+		this.logger.Infof("Id is set to: " + x.Id)
 	}
 
 	dst := x	// copy
@@ -350,7 +354,7 @@ func (this *HDLS) putTransactionIdentification(x *TransactionIdentification) err
 }
 
 func (this *HDLS) getTransactionIdentification(id string) (*TransactionIdentification, error) {
-	this.logger.Infof("Call: getTransactionIdentification")
+	this.logger.Infof("Call: getTransactionIdentification with id: " + id)
 
 	var x TransactionIdentification 
 	err := this.getA("TransactionIdentification", id, &x)
@@ -490,8 +494,10 @@ func (this *HDLS) refIdTransactionInfoTransactionId(v string) string {
 }
 
 func (this *HDLS) putTransactionInfo(x *TransactionInfo) error {
+	this.logger.Infof("Call: putTransactionInfo with id: " + x.Id)
 	if x.Id == "" {
 		x.Id, _ = this.idTransactionInfo(x)
+		this.logger.Infof("Id is set to: " + x.Id)
 	}
 
 	dst := x	// copy
@@ -526,7 +532,7 @@ func (this *HDLS) putTransactionInfo(x *TransactionInfo) error {
 }
 
 func (this *HDLS) getTransactionInfo(id string) (*TransactionInfo, error) {
-	this.logger.Infof("Call: getTransactionInfo")
+	this.logger.Infof("Call: getTransactionInfo with id: " + id)
 
 	var x TransactionInfo 
 	err := this.getA("TransactionInfo", id, &x)
@@ -641,8 +647,10 @@ func (this *HDLS) refIdCustomerAccountId(v string) string {
 }
 
 func (this *HDLS) putCustomer(x *Customer) error {
+	this.logger.Infof("Call: putCustomer with id: " + x.Id)
 	if x.Id == "" {
 		x.Id, _ = this.idCustomer(x)
+		this.logger.Infof("Id is set to: " + x.Id)
 	}
 
 	dst := x	// copy
@@ -702,7 +710,7 @@ func (this *HDLS) putCustomer(x *Customer) error {
 }
 
 func (this *HDLS) getCustomer(id string) (*Customer, error) {
-	this.logger.Infof("Call: getCustomer")
+	this.logger.Infof("Call: getCustomer with id: " + id)
 
 	var x Customer 
 	err := this.getA("Customer", id, &x)
@@ -854,8 +862,10 @@ func (this *HDLS) overwriteCustomer(x *Customer) error {
 
 
 func (this *HDLS) putBank(x *Bank) error {
+	this.logger.Infof("Call: putBank with id: " + x.Id)
 	if x.Id == "" {
 		x.Id, _ = this.idBank(x)
+		this.logger.Infof("Id is set to: " + x.Id)
 	}
 
 	dst := x	// copy
@@ -881,7 +891,7 @@ func (this *HDLS) putBank(x *Bank) error {
 }
 
 func (this *HDLS) getBank(id string) (*Bank, error) {
-	this.logger.Infof("Call: getBank")
+	this.logger.Infof("Call: getBank with id: " + id)
 
 	var x Bank 
 	err := this.getA("Bank", id, &x)
@@ -968,8 +978,10 @@ func (this *HDLS) overwriteBank(x *Bank) error {
 
 
 func (this *HDLS) putMerchant(x *Merchant) error {
+	this.logger.Infof("Call: putMerchant with id: " + x.Id)
 	if x.Id == "" {
 		x.Id, _ = this.idMerchant(x)
+		this.logger.Infof("Id is set to: " + x.Id)
 	}
 
 	dst := x	// copy
@@ -995,7 +1007,7 @@ func (this *HDLS) putMerchant(x *Merchant) error {
 }
 
 func (this *HDLS) getMerchant(id string) (*Merchant, error) {
-	this.logger.Infof("Call: getMerchant")
+	this.logger.Infof("Call: getMerchant with id: " + id)
 
 	var x Merchant 
 	err := this.getA("Merchant", id, &x)
@@ -1082,8 +1094,10 @@ func (this *HDLS) overwriteMerchant(x *Merchant) error {
 
 
 func (this *HDLS) putPISP(x *PISP) error {
+	this.logger.Infof("Call: putPISP with id: " + x.Id)
 	if x.Id == "" {
 		x.Id, _ = this.idPISP(x)
+		this.logger.Infof("Id is set to: " + x.Id)
 	}
 
 	dst := x	// copy
@@ -1109,7 +1123,7 @@ func (this *HDLS) putPISP(x *PISP) error {
 }
 
 func (this *HDLS) getPISP(id string) (*PISP, error) {
-	this.logger.Infof("Call: getPISP")
+	this.logger.Infof("Call: getPISP with id: " + id)
 
 	var x PISP 
 	err := this.getA("PISP", id, &x)
@@ -1199,8 +1213,10 @@ func (this *HDLS) refIdResolutionOutcome(v string) string {
 }
 
 func (this *HDLS) putResolution(x *Resolution) error {
+	this.logger.Infof("Call: putResolution with id: " + x.Id)
 	if x.Id == "" {
 		x.Id, _ = this.idResolution(x)
+		this.logger.Infof("Id is set to: " + x.Id)
 	}
 
 	dst := x	// copy
@@ -1244,7 +1260,7 @@ func (this *HDLS) putResolution(x *Resolution) error {
 }
 
 func (this *HDLS) getResolution(id string) (*Resolution, error) {
-	this.logger.Infof("Call: getResolution")
+	this.logger.Infof("Call: getResolution with id: " + id)
 
 	var x Resolution 
 	err := this.getA("Resolution", id, &x)
@@ -1368,8 +1384,10 @@ func (this *HDLS) overwriteResolution(x *Resolution) error {
 
 
 func (this *HDLS) putResolutionExecution(x *ResolutionExecution) error {
+	this.logger.Infof("Call: putResolutionExecution with id: " + x.Id)
 	if x.Id == "" {
 		x.Id, _ = this.idResolutionExecution(x)
+		this.logger.Infof("Id is set to: " + x.Id)
 	}
 
 	dst := x	// copy
@@ -1395,7 +1413,7 @@ func (this *HDLS) putResolutionExecution(x *ResolutionExecution) error {
 }
 
 func (this *HDLS) getResolutionExecution(id string) (*ResolutionExecution, error) {
-	this.logger.Infof("Call: getResolutionExecution")
+	this.logger.Infof("Call: getResolutionExecution with id: " + id)
 
 	var x ResolutionExecution 
 	err := this.getA("ResolutionExecution", id, &x)
@@ -1485,8 +1503,10 @@ func (this *HDLS) refIdCustomerDisputeStatus(v string) string {
 }
 
 func (this *HDLS) putCustomerDispute(x *CustomerDispute) error {
+	this.logger.Infof("Call: putCustomerDispute with id: " + x.Id)
 	if x.Id == "" {
 		x.Id, _ = this.idCustomerDispute(x)
+		this.logger.Infof("Id is set to: " + x.Id)
 	}
 
 	dst := x	// copy
@@ -1575,7 +1595,7 @@ func (this *HDLS) putCustomerDispute(x *CustomerDispute) error {
 }
 
 func (this *HDLS) getCustomerDispute(id string) (*CustomerDispute, error) {
-	this.logger.Infof("Call: getCustomerDispute")
+	this.logger.Infof("Call: getCustomerDispute with id: " + id)
 
 	var x CustomerDispute 
 	err := this.getA("CustomerDispute", id, &x)
