@@ -81,6 +81,7 @@ func (hdls *HDLS) updateMerchantInformation(disputeContent CustomerDispute) erro
 		return e
 	}
 	existingDispute.Audit = append(existingDispute.Audit, string(b))
+	disputeContent.Merchant.Id = existingDispute.Merchant.Id
 	existingDispute.Merchant = disputeContent.Merchant
 	existingDispute.Owner = removeElem(existingDispute.Owner, i)
 	if len(existingDispute.Owner) == 0 {
@@ -127,6 +128,7 @@ func (hdls *HDLS) updateBankInformation(disputeContent CustomerDispute) error {
 		return e
 	}
 	existingDispute.Audit = append(existingDispute.Audit, string(b))
+	disputeContent.Bank.Id = existingDispute.Bank.Id
 	existingDispute.Bank = disputeContent.Bank
 	existingDispute.Owner = removeElem(existingDispute.Owner, i)
 	if len(existingDispute.Owner) == 0 {
